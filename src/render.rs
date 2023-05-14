@@ -1,5 +1,5 @@
 use crate::{
-    color::Color,
+    color::{Color, ColorMatrix},
     math::{
         ray::{Intersection, Ray},
         vec3::Vec3,
@@ -7,10 +7,7 @@ use crate::{
     },
 };
 
-pub fn hello_sphere() {
-    // window setup
-    let output_width = 800;
-    let output_height = 450;
+pub fn hello_sphere(output_width: u32, output_height: u32) -> ColorMatrix {
     let aspect_ratio = (output_width as f32) / (output_height as f32);
 
     // camera setup (all in world units)
@@ -35,31 +32,37 @@ pub fn hello_sphere() {
 
     let sphere = SphereAtOrigin::new(1.0);
 
-    // create image buffer
-    let mut img_buffer = image::ImageBuffer::new(output_width, output_height);
+    // sky color
+    let zenith_col = Color::from_rgb(1.0, 1.0, 1.0);
+    let nadir_col = Color::from_rgb(0.5, 0.7, 1.0);
+
+    // create output
+    let mut color_mat = ColorMatrix::new(output_width as usize, output_height as usize);
 
     // compute pixel values
     for pix_x in 0..output_width {
         for pix_y in 0..output_height {
             let origin = Vec3::clone(&camera_origin);
-            let dir = dir_for_pixel(pix_x, pix_y);
-            let ray = Ray::new(origin, dir);
+            let dir = dir_for_pixel(pix_x, pix_y).normalize();
+            let ray = Ray::new(origin, dir.clone());
 
-            let pixel = img_buffer.get_pixel_mut(pix_x, pix_y);
+            let mat_entry = color_mat.at_mut(pix_y as usize, pix_x as usize);
 
             match ray.intersect_sphere(&sphere) {
                 Some(Intersection { point: _, normal }) => {
                     let mapped_normal = 0.5 * &(&normal + &Vec3::new(1.0, 1.0, 1.0));
-                    let color: Color = mapped_normal.into();
-                    *pixel = color.into();
+                    *mat_entry = mapped_normal.into();
                 }
                 None => {
-                    *pixel = image::Rgb::<u8>([0, 0, 0]);
+                    // TODO: lerp!!
+                    let t = 0.5 * (dir.y + 1.0);
+
+                    let sky_color = &((1.0 - t) * &zenith_col) + &(t * &nadir_col);
+                    *mat_entry = sky_color;
                 }
             }
         }
     }
 
-    // write to output
-    img_buffer.save("target/debug/img_out/render.png").unwrap();
+    color_mat
 }
