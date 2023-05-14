@@ -1,9 +1,12 @@
 use image::ImageBuffer;
 
-use crate::math::{
-    ray::{Intersection, Ray},
-    vec3::Vec3,
-    SphereAtOrigin,
+use crate::{
+    color::Color,
+    math::{
+        ray::{Intersection, Ray},
+        vec3::Vec3,
+        SphereAtOrigin,
+    },
 };
 
 pub fn img_hello_world() {
@@ -62,10 +65,9 @@ pub fn hello_sphere() {
 
             match ray.intersect_sphere(&sphere) {
                 Some(Intersection { point: _, normal }) => {
-                    let Vec3 { x, y, z } = 0.5 * &(&normal + &Vec3::new(1.0, 1.0, 1.0));
-
-                    *pixel =
-                        image::Rgb::<u8>([(255.0 * x) as u8, (255.0 * y) as u8, (255.0 * z) as u8]);
+                    let mapped_normal = 0.5 * &(&normal + &Vec3::new(1.0, 1.0, 1.0));
+                    let color: Color = mapped_normal.into();
+                    *pixel = color.into();
                 }
                 None => {
                     *pixel = image::Rgb::<u8>([0, 0, 0]);
