@@ -1,35 +1,18 @@
 use crate::{
+    camera::Camera,
     color::{Color, ColorMatrix},
-    math::{
-        ray::{Intersection, Ray},
-        vec3::Vec3,
-        SphereAtOrigin,
-    },
+    math::{ray::Intersection, vec3::Vec3, SphereAtOrigin},
     shaping::lerp::lerp,
 };
 
 pub fn hello_sphere(output_width: u32, output_height: u32) -> ColorMatrix {
-    let aspect_ratio = (output_width as f32) / (output_height as f32);
-
-    // camera setup (all in world units)
-    // currently facing down the (negative) z-axis
-    let viewport_width = 4.0;
-    let viewport_height = viewport_width / aspect_ratio;
-    let focal_length = 2.0;
-
-    let camera_origin = Vec3::new(0.0, 0.0, 2.0);
-
-    let camera_right = Vec3::new(viewport_width, 0.0, 0.0);
-    let camera_up = Vec3::new(0.0, viewport_height, 0.0);
-    let camera_forward = Vec3::new(0.0, 0.0, focal_length);
-
-    let dir_for_pixel = |pix_x: u32, pix_y: u32| {
-        // normalized screen coords (-1 to 1)
-        let u = 2.0 * (pix_x as f32) / (output_width as f32) - 1.0;
-        let v = 2.0 * (pix_y as f32) / (output_height as f32) - 1.0;
-
-        camera_forward + u * camera_right + v * camera_up
-    };
+    let camera = Camera::new(
+        output_width,
+        output_height,
+        4.0,
+        2.0,
+        Vec3::new(0.0, 0.0, 2.0),
+    );
 
     let sphere = SphereAtOrigin::new(1.0);
 
@@ -41,13 +24,11 @@ pub fn hello_sphere(output_width: u32, output_height: u32) -> ColorMatrix {
     let mut color_mat = ColorMatrix::new(output_width as usize, output_height as usize);
 
     // compute pixel values
-    for pix_x in 0..output_width {
-        for pix_y in 0..output_height {
-            let origin = Vec3::clone(&camera_origin);
-            let dir = dir_for_pixel(pix_x, pix_y).normalize();
-            let ray = Ray::new(origin, dir);
+    for pixel_x in 0..output_width {
+        for pixel_y in 0..output_height {
+            let ray = camera.ray_for_pixel(pixel_x, pixel_y);
 
-            let mat_entry = color_mat.at_mut(pix_y as usize, pix_x as usize);
+            let mat_entry = color_mat.at_mut(pixel_y as usize, pixel_x as usize);
 
             match ray.intersect_sphere(&sphere) {
                 Some(Intersection { point: _, normal }) => {
@@ -56,7 +37,7 @@ pub fn hello_sphere(output_width: u32, output_height: u32) -> ColorMatrix {
                 }
                 None => {
                     // TODO: remap!!
-                    let t = 0.5 * (dir.y + 1.0);
+                    let t = 0.5 * (ray.dir.y + 1.0);
 
                     let sky_color = lerp(t, zenith_col, nadir_col);
                     *mat_entry = sky_color;

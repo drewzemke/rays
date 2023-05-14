@@ -2,8 +2,8 @@ use super::{vec3::Vec3, SphereAtOrigin};
 
 #[derive(Debug, PartialEq)]
 pub struct Ray {
-    origin: Vec3,
-    dir: Vec3,
+    pub origin: Vec3,
+    pub dir: Vec3,
 }
 
 #[derive(Debug, PartialEq)]
