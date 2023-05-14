@@ -1,8 +1,12 @@
 use crate::{
     camera::Camera,
-    color::{Color, ColorMatrix},
-    math::{ray::Intersection, vec3::Vec3, SphereAtOrigin},
-    shaping::lerp::lerp,
+    math::{
+        color::{Color, ColorMatrix},
+        ray::Intersection,
+        shaping::lerp,
+        vec3::Vec3,
+        SphereAtOrigin,
+    },
 };
 
 pub fn hello_sphere(output_width: u32, output_height: u32) -> ColorMatrix {
