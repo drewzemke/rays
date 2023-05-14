@@ -5,6 +5,7 @@ use crate::{
         vec3::Vec3,
         SphereAtOrigin,
     },
+    shaping::lerp::lerp,
 };
 
 pub fn hello_sphere(output_width: u32, output_height: u32) -> ColorMatrix {
@@ -50,14 +51,14 @@ pub fn hello_sphere(output_width: u32, output_height: u32) -> ColorMatrix {
 
             match ray.intersect_sphere(&sphere) {
                 Some(Intersection { point: _, normal }) => {
-                    let mapped_normal = 0.5 * normal + Vec3::new(1.0, 1.0, 1.0);
+                    let mapped_normal = 0.5 * (normal + Vec3::new(1.0, 1.0, 1.0));
                     *mat_entry = mapped_normal.into();
                 }
                 None => {
-                    // TODO: lerp!!
+                    // TODO: remap!!
                     let t = 0.5 * (dir.y + 1.0);
 
-                    let sky_color = (1.0 - t) * zenith_col + t * nadir_col;
+                    let sky_color = lerp(t, zenith_col, nadir_col);
                     *mat_entry = sky_color;
                 }
             }
