@@ -19,19 +19,19 @@ impl Ray {
     }
 
     pub fn at(&self, t: f32) -> Vec3 {
-        &self.origin + &Vec3::scalar_mult(&self.dir, t)
+        self.origin + t * self.dir
     }
 
     pub fn intersect_sphere(&self, sphere: &SphereAtOrigin) -> Option<Intersection> {
-        let a = &self.origin;
-        let b = &self.dir;
-        let c = &Vec3::new(0.0, 0.0, 0.0);
+        let a = self.origin;
+        let b = self.dir;
+        let c = Vec3::new(0.0, 0.0, 0.0);
         let r = sphere.radius;
         let a_min_c = a - c;
 
         // quadratic equation coefficients
-        let q_a = Vec3::dot(b, b);
-        let q_b = 2.0 * Vec3::dot(b, &a_min_c);
+        let q_a = Vec3::dot(&b, &b);
+        let q_b = 2.0 * Vec3::dot(&b, &a_min_c);
         let q_c = Vec3::dot(&a_min_c, &a_min_c) - r * r;
 
         let disc = q_b * q_b - 4.0 * q_a * q_c;

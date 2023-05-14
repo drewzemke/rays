@@ -6,7 +6,7 @@ use crate::{math::vec3::Vec3, shaping::clamp::clamp};
 
 // for now, color is just a wrapper around Vec3, with the implicit assertion that values are between 0 and 1,
 // and that we're using rgb colors
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Copy)]
 pub struct Color(Vec3);
 
 impl Color {
@@ -35,19 +35,19 @@ impl Color {
     }
 }
 
-impl Add for &Color {
+impl Add for Color {
     type Output = Color;
 
     fn add(self, rhs: Self) -> Self::Output {
-        Color::from(&self.0 + &rhs.0)
+        Color::from(self.0 + rhs.0)
     }
 }
 
-impl Mul<&Color> for f32 {
+impl Mul<Color> for f32 {
     type Output = Color;
 
-    fn mul(self, rhs: &Color) -> Self::Output {
-        Color::from(self * &rhs.0)
+    fn mul(self, rhs: Color) -> Self::Output {
+        Color::from(self * rhs.0)
     }
 }
 

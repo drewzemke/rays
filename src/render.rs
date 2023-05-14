@@ -27,7 +27,7 @@ pub fn hello_sphere(output_width: u32, output_height: u32) -> ColorMatrix {
         let u = 2.0 * (pix_x as f32) / (output_width as f32) - 1.0;
         let v = 2.0 * (pix_y as f32) / (output_height as f32) - 1.0;
 
-        &(&camera_forward + &(u * &camera_right)) + &(v * &camera_up)
+        camera_forward + u * camera_right + v * camera_up
     };
 
     let sphere = SphereAtOrigin::new(1.0);
@@ -44,20 +44,20 @@ pub fn hello_sphere(output_width: u32, output_height: u32) -> ColorMatrix {
         for pix_y in 0..output_height {
             let origin = Vec3::clone(&camera_origin);
             let dir = dir_for_pixel(pix_x, pix_y).normalize();
-            let ray = Ray::new(origin, dir.clone());
+            let ray = Ray::new(origin, dir);
 
             let mat_entry = color_mat.at_mut(pix_y as usize, pix_x as usize);
 
             match ray.intersect_sphere(&sphere) {
                 Some(Intersection { point: _, normal }) => {
-                    let mapped_normal = 0.5 * &(&normal + &Vec3::new(1.0, 1.0, 1.0));
+                    let mapped_normal = 0.5 * normal + Vec3::new(1.0, 1.0, 1.0);
                     *mat_entry = mapped_normal.into();
                 }
                 None => {
                     // TODO: lerp!!
                     let t = 0.5 * (dir.y + 1.0);
 
-                    let sky_color = &((1.0 - t) * &zenith_col) + &(t * &nadir_col);
+                    let sky_color = (1.0 - t) * zenith_col + t * nadir_col;
                     *mat_entry = sky_color;
                 }
             }
