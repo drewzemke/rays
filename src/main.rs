@@ -1,5 +1,5 @@
-use rays::render::img_hello_world;
+use rays::render::hello_sphere;
 
 fn main() {
-    img_hello_world();
+    hello_sphere();
 }
