@@ -1,6 +1,10 @@
 use image::ImageBuffer;
 
-use crate::math::{Ray, SphereAtOrigin, Vec3};
+use crate::math::{
+    ray::{Intersection, Ray},
+    vec3::Vec3,
+    SphereAtOrigin,
+};
 
 pub fn img_hello_world() {
     let img = ImageBuffer::from_fn(512, 512, |x, y| {
@@ -26,7 +30,7 @@ pub fn hello_sphere() {
     // currently facing down the (negative) z-axis
     let viewport_width = 4.0;
     let viewport_height = viewport_width / aspect_ratio;
-    let focal_length = 1.0;
+    let focal_length = 2.0;
 
     let camera_origin = Vec3::new(0.0, 0.0, 2.0);
 
@@ -56,10 +60,16 @@ pub fn hello_sphere() {
 
             let pixel = img_buffer.get_pixel_mut(pix_x, pix_y);
 
-            if ray.intersect_sphere(&sphere) {
-                *pixel = image::Rgb::<u8>([255, 255, 255]);
-            } else {
-                *pixel = image::Rgb::<u8>([0, 0, 0]);
+            match ray.intersect_sphere(&sphere) {
+                Some(Intersection { point: _, normal }) => {
+                    let Vec3 { x, y, z } = 0.5 * &(&normal + &Vec3::new(1.0, 1.0, 1.0));
+
+                    *pixel =
+                        image::Rgb::<u8>([(255.0 * x) as u8, (255.0 * y) as u8, (255.0 * z) as u8]);
+                }
+                None => {
+                    *pixel = image::Rgb::<u8>([0, 0, 0]);
+                }
             }
         }
     }
