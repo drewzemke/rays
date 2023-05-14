@@ -2,7 +2,7 @@ use std::ops::{Add, Mul};
 
 use image::{ImageBuffer, Rgb};
 
-use crate::{math::vec3::Vec3, shaping::clamp};
+use crate::{math::vec3::Vec3, shaping::clamp::clamp};
 
 // for now, color is just a wrapper around Vec3, with the implicit assertion that values are between 0 and 1,
 // and that we're using rgb colors
