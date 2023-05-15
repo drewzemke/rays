@@ -1,4 +1,3 @@
-use self::object::sphere::Sphere;
 use crate::math::{
     color::Color,
     ray::{IntersectRay, Intersection, Ray},
@@ -8,13 +7,12 @@ use crate::math::{
 
 pub mod object;
 
-#[derive(Debug)]
 pub struct Scene {
-    objects: Vec<Sphere>,
+    objects: Vec<Box<dyn IntersectRay>>,
 }
 
 impl Scene {
-    pub fn new(objects: Vec<Sphere>) -> Scene {
+    pub fn new(objects: Vec<Box<dyn IntersectRay>>) -> Scene {
         Scene { objects }
     }
 

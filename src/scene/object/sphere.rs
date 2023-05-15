@@ -42,8 +42,7 @@ impl IntersectRay for Sphere {
 }
 
 #[cfg(test)]
-mod sphere_intersect_tests {
-
+mod tests {
     use super::*;
 
     #[test]
