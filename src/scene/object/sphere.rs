@@ -34,7 +34,7 @@ impl IntersectRay for Sphere {
             let t = (-q_b - disc.powf(0.5)) / (2.0 * q_a);
             let point = ray.at(t);
             let normal = (point - c).normalize();
-            Some(Intersection { point, normal })
+            Some(Intersection { point, normal, t })
         } else {
             None
         }
@@ -48,7 +48,7 @@ mod sphere_intersect_tests {
 
     #[test]
     fn ray_hits_sphere_at_origin() {
-        let ray = Ray::new(Vec3::new(0.0, 0.0, -1.0), Vec3::new(0.0, 0.0, 1.0));
+        let ray = Ray::new(Vec3::new(0.0, 0.0, -3.0), Vec3::new(0.0, 0.0, 1.0));
         let sphere = Sphere {
             radius: 1.0,
             center: Vec3::new(0.0, 0.0, 0.0),
@@ -57,7 +57,8 @@ mod sphere_intersect_tests {
             sphere.intersect_ray(&ray),
             Some(Intersection {
                 point: Vec3::new(0.0, 0.0, -1.0),
-                normal: Vec3::new(0.0, 0.0, -1.0)
+                normal: Vec3::new(0.0, 0.0, -1.0),
+                t: 2.0
             })
         )
     }

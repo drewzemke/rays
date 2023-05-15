@@ -20,7 +20,7 @@ pub fn hello_sphere(output_width: u32, output_height: u32) -> ColorMatrix {
         Sphere::new(1.0, Vec3::new(1.0, 1.0, 0.0)),
         Sphere::new(0.5, Vec3::new(-1.0, 0.5, -2.0)),
         Sphere::new(0.5, Vec3::new(-2.0, 0.5, 1.0)),
-        Sphere::new(5.0, Vec3::new(2.0, 5.0, -5.0)),
+        Sphere::new(5.0, Vec3::new(5.0, 5.0, -5.0)),
     ]);
 
     // compute pixel values
