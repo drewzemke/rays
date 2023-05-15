@@ -19,7 +19,7 @@ impl Camera {
         output_height: u32,
         viewport_width: f32,
         focal_length: f32,
-        location: Vec3,
+        position: Vec3,
     ) -> Camera {
         // camera setup (all in world units)
         // currently facing down the (negative) z-axis
@@ -33,7 +33,7 @@ impl Camera {
         Camera {
             output_width,
             output_height,
-            position: location,
+            position,
             camera_forward,
             camera_right,
             camera_up,
@@ -43,7 +43,8 @@ impl Camera {
     fn dir_for_pixel(&self, pixel_x: u32, pixel_y: u32) -> Vec3 {
         // normalized screen coords (-1 to 1)
         let u = 2.0 * (pixel_x as f32) / (self.output_width as f32) - 1.0;
-        let v = 2.0 * (pixel_y as f32) / (self.output_height as f32) - 1.0;
+        // pixel_y traverses from top to bottom, so negate
+        let v = -(2.0 * (pixel_y as f32) / (self.output_height as f32) - 1.0);
 
         self.camera_forward + u * self.camera_right + v * self.camera_up
     }
