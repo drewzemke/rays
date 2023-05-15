@@ -28,7 +28,7 @@ impl Camera {
 
         let camera_right = Vec3::new(viewport_width, 0.0, 0.0);
         let camera_up = Vec3::new(0.0, viewport_height, 0.0);
-        let camera_forward = Vec3::new(0.0, 0.0, focal_length);
+        let camera_forward = -Vec3::new(0.0, 0.0, focal_length);
 
         Camera {
             output_width,
@@ -55,4 +55,6 @@ impl Camera {
             dir,
         }
     }
+
+    // TODO: iterator for rays?
 }
