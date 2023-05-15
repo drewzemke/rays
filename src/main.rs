@@ -3,7 +3,10 @@ use rays::{
     camera::Camera,
     math::vec3::Vec3,
     render::render,
-    scene::{object::sphere::Sphere, Scene},
+    scene::{
+        object::{plane::Plane, sphere::Sphere},
+        Scene,
+    },
 };
 
 fn main() {
@@ -17,6 +20,10 @@ fn main() {
         Box::new(Sphere::new(0.5, Vec3::new(-1.0, 0.5, -2.0))),
         Box::new(Sphere::new(0.5, Vec3::new(-2.0, 0.5, 1.0))),
         Box::new(Sphere::new(5.0, Vec3::new(5.0, 5.0, -5.0))),
+        Box::new(Plane::new(
+            Vec3::new(0.0, 0.0, 0.0),
+            Vec3::new(0.0, 1.0, 0.0),
+        )),
     ]);
 
     // camera setup
