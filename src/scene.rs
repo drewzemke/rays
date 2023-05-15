@@ -10,29 +10,33 @@ pub mod object;
 
 #[derive(Debug)]
 pub struct Scene {
-    // objects: Vec<Sphere>,
+    objects: Vec<Sphere>,
 }
 
 impl Scene {
+    pub fn new(objects: Vec<Sphere>) -> Scene {
+        Scene { objects }
+    }
+
     pub fn color_for_ray(&self, ray: Ray) -> Color {
-        // let sphere = &self.objects[0];
+        let mut intersection_color = None;
 
-        let sphere = Sphere::new(1.0, Vec3::new(1.0, 0.0, 0.0));
-
-        // sky color
-        let zenith_col = Color::from_rgb(1.0, 1.0, 1.0);
-        let nadir_col = Color::from_rgb(0.5, 0.7, 1.0);
-
-        match sphere.intersect_ray(&ray) {
-            Some(Intersection { point: _, normal }) => {
+        // sky color -- extract to somewhere else
+        let nadir_color = Color::from_rgb(1.0, 1.0, 1.0);
+        let zenith_color = Color::from_rgb(0.5, 0.7, 1.0);
+        for sphere in self.objects.as_slice().iter() {
+            if let Some(Intersection { point: _, normal }) = sphere.intersect_ray(&ray) {
+                // TODO: use object color
                 let mapped_normal = 0.5 * (normal + Vec3::new(1.0, 1.0, 1.0));
-                mapped_normal.into()
+                intersection_color = Some(mapped_normal.into());
             }
-            None => {
-                // TODO: remap!!
-                let t = 0.5 * (ray.dir.y + 1.0);
-                lerp(t, zenith_col, nadir_col)
-            }
+        }
+
+        if let Some(color) = intersection_color {
+            color
+        } else {
+            let t = 0.5 * (ray.dir.y + 1.0);
+            lerp(t, nadir_color, zenith_color)
         }
     }
 }
