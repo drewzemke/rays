@@ -18,7 +18,7 @@ pub fn hello_sphere(output_width: u32, output_height: u32) -> ColorMatrix {
         Vec3::new(0.0, 0.0, 2.0),
     );
 
-    let sphere = Sphere::new(1.0);
+    let sphere = Sphere::new(1.0, Vec3::new(1.0, 0.0, 0.0));
 
     // sky color
     let zenith_col = Color::from_rgb(1.0, 1.0, 1.0);

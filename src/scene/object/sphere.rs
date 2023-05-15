@@ -6,11 +6,12 @@ use crate::math::{
 #[derive(Debug)]
 pub struct Sphere {
     radius: f32,
+    center: Vec3,
 }
 
 impl Sphere {
-    pub fn new(radius: f32) -> Sphere {
-        Sphere { radius }
+    pub fn new(radius: f32, center: Vec3) -> Sphere {
+        Sphere { radius, center }
     }
 }
 
@@ -18,7 +19,7 @@ impl IntersectRay for Sphere {
     fn intersect_ray(&self, ray: &Ray) -> Option<Intersection> {
         let a = ray.origin;
         let b = ray.dir;
-        let c = Vec3::new(0.0, 0.0, 0.0);
+        let c = self.center;
         let r = self.radius;
         let a_min_c = a - c;
 
@@ -32,7 +33,7 @@ impl IntersectRay for Sphere {
             // take (what is probably?) the closest intersection
             let t = (-q_b - disc.powf(0.5)) / (2.0 * q_a);
             let point = ray.at(t);
-            let normal = point.normalize();
+            let normal = (point - c).normalize();
             Some(Intersection { point, normal })
         } else {
             None
@@ -46,9 +47,12 @@ mod sphere_intersect_tests {
     use super::*;
 
     #[test]
-    fn ray_hits_sphere() {
+    fn ray_hits_sphere_at_origin() {
         let ray = Ray::new(Vec3::new(0.0, 0.0, -1.0), Vec3::new(0.0, 0.0, 1.0));
-        let sphere = Sphere { radius: 1.0 };
+        let sphere = Sphere {
+            radius: 1.0,
+            center: Vec3::new(0.0, 0.0, 0.0),
+        };
         assert_eq!(
             sphere.intersect_ray(&ray),
             Some(Intersection {
@@ -59,9 +63,22 @@ mod sphere_intersect_tests {
     }
 
     #[test]
-    fn ray_misses_sphere() {
+    fn ray_misses_sphere_at_origin() {
         let ray = Ray::new(Vec3::new(0.0, 0.0, -5.0), Vec3::new(1.0, 1.0, 1.0));
-        let sphere = Sphere { radius: 1.0 };
+        let sphere = Sphere {
+            radius: 1.0,
+            center: Vec3::new(0.0, 0.0, 0.0),
+        };
+        assert_eq!(sphere.intersect_ray(&ray), None)
+    }
+
+    #[test]
+    fn ray_misses_shifted() {
+        let ray = Ray::new(Vec3::new(0.0, 0.0, -5.0), Vec3::new(0.0, 0.0, 1.0));
+        let sphere = Sphere {
+            radius: 1.0,
+            center: Vec3::new(2.0, 0.0, 0.0),
+        };
         assert_eq!(sphere.intersect_ray(&ray), None)
     }
 }
