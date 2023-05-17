@@ -17,15 +17,15 @@ impl Sphere {
 
 impl IntersectRay for Sphere {
     fn intersect_ray(&self, ray: &Ray) -> Option<Intersection> {
-        let a = ray.origin;
-        let b = ray.dir;
-        let c = self.center;
+        let a = &ray.origin;
+        let b = &ray.dir;
+        let c = &self.center;
         let r = self.radius;
         let a_min_c = a - c;
 
         // quadratic equation coefficients
-        let q_a = Vec3::dot(&b, &b);
-        let q_b = 2.0 * Vec3::dot(&b, &a_min_c);
+        let q_a = Vec3::dot(b, b);
+        let q_b = 2.0 * Vec3::dot(b, &a_min_c);
         let q_c = Vec3::dot(&a_min_c, &a_min_c) - r * r;
 
         let disc = q_b * q_b - 4.0 * q_a * q_c;
@@ -33,7 +33,7 @@ impl IntersectRay for Sphere {
             // take (what is probably?) the closest intersection
             let t = (-q_b - disc.powf(0.5)) / (2.0 * q_a);
             let point = ray.at(t);
-            let normal = (point - c).normalize();
+            let normal = (&point - c).normalize();
             Some(Intersection { point, normal, t })
         } else {
             None

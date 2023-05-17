@@ -27,12 +27,12 @@ mod clamp_tests {
     }
 }
 
-pub fn lerp<T>(t: f32, start: T, end: T) -> T
+pub fn lerp<T>(t: f32, start: &T, end: &T) -> T
 where
-    f32: Mul<T, Output = T>,
-    T: Add<T, Output = T>,
+    for<'a> f32: Mul<&'a T, Output = T>,
+    for<'a> &'a T: Add<&'a T, Output = T>,
 {
-    (1.0 - t) * start + (t * end)
+    &((1.0 - t) * start) + &(t * end)
 }
 
 #[cfg(test)]
@@ -43,13 +43,13 @@ mod lerp_tests {
 
     #[test]
     fn lerp_with_float() {
-        assert_eq!(lerp(0.5, 2.0, 4.0), 3.0)
+        assert_eq!(lerp(0.5, &2.0, &4.0), 3.0)
     }
 
     #[test]
     fn lerp_with_vec3() {
         let u = Vec3::new(1.0, 2.0, 3.0);
         let v = Vec3::new(0.0, 4.0, 8.0);
-        assert_eq!(lerp(0.5, u, v), Vec3::new(0.5, 3.0, 5.5))
+        assert_eq!(lerp(0.5, &u, &v), Vec3::new(0.5, 3.0, 5.5))
     }
 }

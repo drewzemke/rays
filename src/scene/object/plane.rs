@@ -14,7 +14,7 @@ impl Plane {
 
 impl IntersectRay for Plane {
     fn intersect_ray(&self, ray: &Ray) -> Option<Intersection> {
-        let normal_vs_displ = Vec3::dot(&self.normal, &(ray.origin - self.basepoint));
+        let normal_vs_displ = Vec3::dot(&self.normal, &(&ray.origin - &self.basepoint));
         let normal_vs_dir = Vec3::dot(&self.normal, &ray.dir);
         let t = -normal_vs_displ / normal_vs_dir;
 
@@ -24,7 +24,7 @@ impl IntersectRay for Plane {
         if t > 0.0 {
             Some(Intersection {
                 point: ray.at(t),
-                normal: self.normal,
+                normal: self.normal.clone(),
                 t,
             })
         } else {

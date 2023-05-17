@@ -1,6 +1,7 @@
 use std::ops::{Add, Mul, Neg, Sub};
 
-#[derive(Debug, PartialEq, Copy, Clone)]
+// TODO: replace 'f32' with a more generic type?
+#[derive(Debug, PartialEq, Clone)]
 pub struct Vec3 {
     pub x: f32,
     pub y: f32,
@@ -25,11 +26,11 @@ impl Vec3 {
     }
 
     pub fn normalize(&self) -> Vec3 {
-        (1.0 / self.length()) * *self
+        (1.0 / self.length()) * self
     }
 }
 
-impl Add for Vec3 {
+impl Add for &Vec3 {
     type Output = Vec3;
 
     fn add(self, rhs: Self) -> Self::Output {
@@ -37,7 +38,7 @@ impl Add for Vec3 {
     }
 }
 
-impl Sub for Vec3 {
+impl Sub for &Vec3 {
     type Output = Vec3;
 
     fn sub(self, rhs: Self) -> Self::Output {
@@ -45,7 +46,7 @@ impl Sub for Vec3 {
     }
 }
 
-impl Neg for Vec3 {
+impl Neg for &Vec3 {
     type Output = Vec3;
 
     fn neg(self) -> Self::Output {
@@ -53,10 +54,10 @@ impl Neg for Vec3 {
     }
 }
 
-impl Mul<Vec3> for f32 {
+impl Mul<&Vec3> for f32 {
     type Output = Vec3;
 
-    fn mul(self, rhs: Vec3) -> Self::Output {
+    fn mul(self, rhs: &Vec3) -> Self::Output {
         Vec3::new(self * rhs.x, self * rhs.y, self * rhs.z)
     }
 }
@@ -77,27 +78,27 @@ mod tests {
     fn add_vecs() {
         let u = Vec3::new(1.0, 2.0, 3.0);
         let v = Vec3::new(0.0, 4.0, 8.0);
-        assert_eq!(u + v, Vec3::new(1.0, 6.0, 11.0))
+        assert_eq!(&u + &v, Vec3::new(1.0, 6.0, 11.0))
     }
 
     #[test]
     fn negate_vec() {
         let u = Vec3::new(1.0, 2.0, 3.0);
-        assert_eq!(-u, Vec3::new(-1.0, -2.0, -3.0))
+        assert_eq!(-&u, Vec3::new(-1.0, -2.0, -3.0))
     }
 
     #[test]
     fn subtract_vecs() {
         let u = Vec3::new(1.0, 2.0, 3.0);
         let v = Vec3::new(0.0, 4.0, 8.0);
-        assert_eq!(u - v, Vec3::new(1.0, -2.0, -5.0))
+        assert_eq!(&u - &v, Vec3::new(1.0, -2.0, -5.0))
     }
 
     #[test]
     fn scalar_mult() {
         let u = Vec3::new(1.0, 2.0, 3.0);
         let k = -5.0f32;
-        assert_eq!(k * u, Vec3::new(-5.0, -10.0, -15.0))
+        assert_eq!(k * &u, Vec3::new(-5.0, -10.0, -15.0))
     }
 
     #[test]

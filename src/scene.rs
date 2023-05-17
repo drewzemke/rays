@@ -33,7 +33,7 @@ impl Scene {
                 if t < intersection_t {
                     intersection_t = t;
                     // TODO: use object color
-                    let mapped_normal = 0.5 * (normal + Vec3::new(1.0, 1.0, 1.0));
+                    let mapped_normal = 0.5 * &(&normal + &Vec3::new(1.0, 1.0, 1.0));
                     intersection_color = Some(mapped_normal.into());
                 }
             }
@@ -43,7 +43,7 @@ impl Scene {
             color
         } else {
             let t = 0.5 * (ray.dir.y + 1.0);
-            lerp(t, nadir_color, zenith_color)
+            lerp(t, &nadir_color, &zenith_color)
         }
     }
 }

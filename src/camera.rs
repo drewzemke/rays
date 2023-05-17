@@ -28,7 +28,7 @@ impl Camera {
 
         let camera_right = Vec3::new(viewport_width, 0.0, 0.0);
         let camera_up = Vec3::new(0.0, viewport_height, 0.0);
-        let camera_forward = -Vec3::new(0.0, 0.0, focal_length);
+        let camera_forward = Vec3::new(0.0, 0.0, -focal_length);
 
         Camera {
             output_width,
@@ -46,13 +46,14 @@ impl Camera {
         // pixel_y traverses from top to bottom, so negate
         let v = -(2.0 * (pixel_y as f32) / (self.output_height as f32) - 1.0);
 
-        self.camera_forward + u * self.camera_right + v * self.camera_up
+        // FIXME: idk this just looks gross
+        &(&self.camera_forward + &(u * &self.camera_right)) + &(v * &self.camera_up)
     }
 
     pub fn ray_for_pixel(&self, pixel_x: u32, pixel_y: u32) -> Ray {
         let dir = self.dir_for_pixel(pixel_x, pixel_y).normalize();
         Ray {
-            origin: self.position,
+            origin: self.position.clone(),
             dir,
         }
     }
