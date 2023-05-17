@@ -1,3 +1,5 @@
+use rand::{thread_rng, Rng};
+
 use crate::math::{ray::Ray, vec3::Vec3};
 
 // camera manages the transformation between screen space and world space
@@ -41,10 +43,14 @@ impl Camera {
     }
 
     fn dir_for_pixel(&self, pixel_x: u32, pixel_y: u32) -> Vec3 {
+        let mut rng = thread_rng();
+        let x_noise: f32 = rng.gen();
+        let y_noise: f32 = rng.gen();
+
         // normalized screen coords (-1 to 1)
-        let u = 2.0 * (pixel_x as f32) / (self.output_width as f32) - 1.0;
+        let u = 2.0 * (pixel_x as f32 + x_noise) / (self.output_width as f32) - 1.0;
         // pixel_y traverses from top to bottom, so negate
-        let v = -(2.0 * (pixel_y as f32) / (self.output_height as f32) - 1.0);
+        let v = -(2.0 * (pixel_y as f32 + y_noise) / (self.output_height as f32) - 1.0);
 
         // FIXME: idk this just looks gross
         &(&self.camera_forward + &(u * &self.camera_right)) + &(v * &self.camera_up)
@@ -59,4 +65,6 @@ impl Camera {
     }
 
     // TODO: iterator for rays?
+    // this would make it easier to adapt ray generation strategies,
+    // like we decide to generate rays at completely random rather than per pixel
 }

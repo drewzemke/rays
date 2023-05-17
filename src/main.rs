@@ -37,7 +37,14 @@ fn main() {
     );
 
     // render
-    let color_mat = render(scene, camera, output_width, output_height);
+    let samples_per_pixel = 20;
+    let color_mat = render(
+        scene,
+        camera,
+        output_width,
+        output_height,
+        samples_per_pixel,
+    );
 
     // write to output
     let img_buffer: ImageBuffer<Rgb<u8>, Vec<u8>> = color_mat.into();
