@@ -1,4 +1,8 @@
-use std::ops::{Add, Mul, Neg, Sub};
+use rand::Rng;
+use std::{
+    f32::consts::PI,
+    ops::{Add, Mul, Neg, Sub},
+};
 
 // TODO: replace 'f32' with a more generic type?
 #[derive(Debug, PartialEq, Clone)]
@@ -27,6 +31,29 @@ impl Vec3 {
 
     pub fn normalize(&self) -> Vec3 {
         (1.0 / self.length()) * self
+    }
+
+    // This is based on some not-trivial-but-also-not-the-worst math.
+    // You can prove that vectors generated according to this formula
+    // are uniformly distributed on the unit sphere.
+    pub fn random_unit_vector() -> Vec3 {
+        let mut rng = rand::thread_rng();
+        // generate two numbers in [0,1]
+        let s: f32 = rng.gen();
+        let t: f32 = rng.gen();
+
+        // transform to be in [0, 2pi] and [-1,1], respectively
+        let s1 = 2.0 * PI * s;
+        let t1 = 2.0 * t - 1.0;
+
+        // just to DRY this up a bit:
+        let sq = (1.0 - t1.powi(2)).powf(0.5);
+
+        let x = s1.cos() * sq;
+        let y = s1.sin() * sq;
+        let z = t1;
+
+        Vec3::new(x, y, z)
     }
 }
 
@@ -118,5 +145,13 @@ mod tests {
     fn normalize_vec() {
         let u = Vec3::new(4.0, 0.0, 3.0);
         assert_eq!(u.normalize(), Vec3::new(0.8, 0.0, 0.6))
+    }
+
+    #[test]
+    fn create_unit_vec() {
+        let v = Vec3::random_unit_vector();
+        // we can't really verify that this is randomly distributed, unfortunately
+        assert!(v.length() - 1.0 < 0.00000001)
+        // yay for float comparison
     }
 }
