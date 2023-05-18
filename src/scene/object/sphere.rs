@@ -32,9 +32,15 @@ impl IntersectRay for Sphere {
         if disc >= 0.0 {
             // take (what is probably?) the closest intersection
             let t = (-q_b - disc.powf(0.5)) / (2.0 * q_a);
-            let point = ray.at(t);
-            let normal = (&point - c).normalize();
-            Some(Intersection { point, normal, t })
+
+            // HACK: this should be a constraint managed outside of this function
+            if t > 0.001 {
+                let point = ray.at(t);
+                let normal = (&point - c).normalize();
+                Some(Intersection { point, normal, t })
+            } else {
+                None
+            }
         } else {
             None
         }

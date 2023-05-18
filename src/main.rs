@@ -37,13 +37,16 @@ fn main() {
     );
 
     // render
-    let samples_per_pixel = 20;
+    let samples_per_pixel = 5;
+    let bounce_depth = 4;
+
     let color_mat = render(
         scene,
         camera,
         output_width,
         output_height,
         samples_per_pixel,
+        bounce_depth,
     );
 
     // write to output

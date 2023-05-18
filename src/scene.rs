@@ -16,34 +16,61 @@ impl Scene {
         Scene { objects }
     }
 
-    pub fn color_for_ray(&self, ray: Ray) -> Color {
-        let mut intersection_color = None;
-        let mut intersection_t = f32::INFINITY;
+    // TODO: some of this logic should probably reside in render
+    // maybe scene should only handle single ray intersections, not the recursion? idk
+    pub fn color_for_ray(&self, ray: Ray, bounce_depth: u32) -> Color {
+        if bounce_depth == 0 {
+            return Color::from_rgb(0.0, 0.0, 0.0);
+        }
 
-        // sky color -- extract to somewhere else
-        let nadir_color = Color::from_rgb(1.0, 1.0, 1.0);
-        let zenith_color = Color::from_rgb(0.5, 0.7, 1.0);
-        for sphere in self.objects.as_slice().iter() {
+        let mut closest_intersection = None;
+
+        for object in self.objects.as_slice().iter() {
+            let current_intersection = object.intersect_ray(&ray);
+
+            // FIXME: this looks like butt
             if let Some(Intersection {
                 point: _,
-                normal,
+                normal: _,
                 t,
-            }) = sphere.intersect_ray(&ray)
+            }) = current_intersection
             {
-                if t < intersection_t {
-                    intersection_t = t;
-                    // TODO: use object color
-                    let mapped_normal = 0.5 * &(&normal + &Vec3::new(1.0, 1.0, 1.0));
-                    intersection_color = Some(mapped_normal.into());
+                match closest_intersection {
+                    Some(Intersection {
+                        point: _,
+                        normal: _,
+                        t: closest_t,
+                    }) => {
+                        if t < closest_t {
+                            closest_intersection = current_intersection;
+                        }
+                    }
+                    None => {
+                        closest_intersection = current_intersection;
+                    }
                 }
             }
         }
 
-        if let Some(color) = intersection_color {
-            color
-        } else {
-            let t = 0.5 * (ray.dir.y + 1.0);
-            lerp(t, &nadir_color, &zenith_color)
+        match closest_intersection {
+            Some(intersection) => {
+                // TODO: modulate by object color
+                // generate a diffuse vector, and run it back
+                let random_unit = Vec3::random_unit_vector();
+                let new_ray = Ray::new(intersection.point, &intersection.normal + &random_unit);
+
+                0.5 * &self.color_for_ray(new_ray, bounce_depth - 1)
+            }
+            None => self.sky_color_for_direction(ray.dir),
         }
+    }
+
+    fn sky_color_for_direction(&self, dir: Vec3) -> Color {
+        // TODO: make these params
+        let nadir_color = Color::from_rgb(1.0, 1.0, 1.0);
+        let zenith_color = Color::from_rgb(0.5, 0.7, 1.0);
+
+        let t = 0.5 * (dir.y + 1.0);
+        lerp(t, &nadir_color, &zenith_color)
     }
 }

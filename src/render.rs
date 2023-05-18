@@ -10,6 +10,7 @@ pub fn render(
     output_width: u32,
     output_height: u32,
     samples_per_pixel: u32,
+    bounce_depth: u32,
 ) -> ColorMatrix {
     // create output
     let mut color_mat = ColorMatrix::new(output_width as usize, output_height as usize);
@@ -20,7 +21,7 @@ pub fn render(
             let mut accumulated_color = Color::from_rgb(0.0, 0.0, 0.0);
             for _ in 0..samples_per_pixel {
                 let ray = camera.ray_for_pixel(pixel_x, pixel_y);
-                accumulated_color = &accumulated_color + &scene.color_for_ray(ray);
+                accumulated_color = &accumulated_color + &scene.color_for_ray(ray, bounce_depth);
             }
 
             let mat_entry = color_mat.at_mut(pixel_y as usize, pixel_x as usize);
