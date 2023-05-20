@@ -28,26 +28,11 @@ impl Scene {
         for object in self.objects.as_slice().iter() {
             let current_intersection = object.intersect_ray(&ray);
 
-            // FIXME: this looks like butt
-            if let Some(Intersection {
-                point: _,
-                normal: _,
-                t,
-            }) = current_intersection
-            {
+            if let Some(Intersection { t: current_t, .. }) = current_intersection {
                 match closest_intersection {
-                    Some(Intersection {
-                        point: _,
-                        normal: _,
-                        t: closest_t,
-                    }) => {
-                        if t < closest_t {
-                            closest_intersection = current_intersection;
-                        }
-                    }
-                    None => {
-                        closest_intersection = current_intersection;
-                    }
+                    // Don't update the closest intersection only if a larger t was found
+                    Some(Intersection { t: closest_t, .. }) if current_t > closest_t => {}
+                    _ => closest_intersection = current_intersection,
                 }
             }
         }
