@@ -24,8 +24,18 @@ pub fn render(
                 accumulated_color = &accumulated_color + &scene.color_for_ray(ray, bounce_depth);
             }
 
+            // gamma correction -- move to a post processing module at some point
+            let avg_color = (1.0 / samples_per_pixel as f32) * &accumulated_color;
+            // probably also implement a color exponential function
+            let exponent = 1.0 / 2.2;
+            let corrected_color = Color::from_rgb(
+                avg_color.r().powf(exponent),
+                avg_color.g().powf(exponent),
+                avg_color.b().powf(exponent),
+            );
+
             let mat_entry = color_mat.at_mut(pixel_y as usize, pixel_x as usize);
-            *mat_entry = (1.0 / samples_per_pixel as f32) * &accumulated_color;
+            *mat_entry = corrected_color;
         }
     }
 
