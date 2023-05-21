@@ -17,7 +17,7 @@ impl<'a> Scene<'a> {
     // maybe scene should only handle single ray intersections, not the recursion? idk
     pub fn color_for_ray(&self, ray: Ray, bounce_depth: u32) -> Color {
         if bounce_depth == 0 {
-            return Color::from_rgb(0.0, 0.0, 0.0);
+            return Color::from_rgb_f32(0.0, 0.0, 0.0);
         }
 
         // HACK: do we need to store both of these?
@@ -54,8 +54,8 @@ impl<'a> Scene<'a> {
 
     fn sky_color_for_direction(&self, dir: Vec3) -> Color {
         // TODO: make these params
-        let nadir_color = Color::from_rgb(1.0, 1.0, 1.0);
-        let zenith_color = Color::from_rgb(0.5, 0.7, 1.0);
+        let nadir_color = Color::from_rgb_f32(1.0, 1.0, 1.0);
+        let zenith_color = Color::from_rgb_f32(0.5, 0.7, 1.0);
 
         let t = 0.5 * (dir.y + 1.0);
         lerp(t, &nadir_color, &zenith_color)

@@ -11,7 +11,7 @@ use crate::math::vec3::Vec3;
 pub struct Color(Vec3);
 
 impl Color {
-    pub fn from_rgb(r: f32, g: f32, b: f32) -> Color {
+    pub fn from_rgb_f32(r: f32, g: f32, b: f32) -> Color {
         Color(Vec3 { x: r, y: g, z: b })
     }
 
@@ -57,7 +57,7 @@ impl Mul for &Color {
     type Output = Color;
 
     fn mul(self, rhs: Self) -> Self::Output {
-        Color::from_rgb(self.r() * rhs.r(), self.g() * rhs.g(), self.b() * rhs.b())
+        Color::from_rgb_f32(self.r() * rhs.r(), self.g() * rhs.g(), self.b() * rhs.b())
     }
 }
 
@@ -83,7 +83,7 @@ mod tests {
 
     #[test]
     fn create_and_access_color() {
-        let color = Color::from_rgb(0.2, 0.8, 0.9);
+        let color = Color::from_rgb_f32(0.2, 0.8, 0.9);
         assert_eq!(color.r(), 0.2);
         assert_eq!(color.g(), 0.8);
         assert_eq!(color.b(), 0.9);
@@ -93,21 +93,21 @@ mod tests {
     fn color_from_vec3() {
         let v = Vec3::new(0.1, 0.2, 0.3);
         let c: Color = v.into();
-        assert_eq!(c, Color::from_rgb(0.1, 0.2, 0.3));
+        assert_eq!(c, Color::from_rgb_f32(0.1, 0.2, 0.3));
     }
 
     #[test]
     fn color_from_vec3_with_clamping() {
         let v = Vec3::new(-0.4, 1.2, 0.3);
         let c: Color = Color::from_clamped(v);
-        assert_eq!(c, Color::from_rgb(0.0, 1.0, 0.3));
+        assert_eq!(c, Color::from_rgb_f32(0.0, 1.0, 0.3));
     }
 
     #[test]
     fn multiply_colors() {
-        let c1: Color = Color::from_rgb(0.1, 0.5, 0.4);
-        let c2: Color = Color::from_rgb(0.5, 0.8, 1.0);
-        assert_eq!(&c1 * &c2, Color::from_rgb(0.05, 0.4, 0.4));
+        let c1: Color = Color::from_rgb_f32(0.1, 0.5, 0.4);
+        let c2: Color = Color::from_rgb_f32(0.5, 0.8, 1.0);
+        assert_eq!(&c1 * &c2, Color::from_rgb_f32(0.05, 0.4, 0.4));
     }
 }
 
@@ -117,7 +117,7 @@ pub struct ColorMatrix(Vec<Vec<Color>>);
 
 impl ColorMatrix {
     pub fn new(width: usize, height: usize) -> ColorMatrix {
-        let default_color = Color::from_rgb(0.0, 0.0, 0.0);
+        let default_color = Color::from_rgb_f32(0.0, 0.0, 0.0);
         let row = vec![default_color; width];
         ColorMatrix(vec![row; height])
     }
@@ -169,16 +169,16 @@ mod color_mat_tests {
     fn access_entry() {
         let mat = ColorMatrix::new(2, 3);
         let bottom_right_entry = mat.at(2, 1);
-        assert_eq!(*bottom_right_entry, Color::from_rgb(0.0, 0.0, 0.0))
+        assert_eq!(*bottom_right_entry, Color::from_rgb_f32(0.0, 0.0, 0.0))
     }
 
     #[test]
     fn access_and_modify_entry() {
         let mut mat = ColorMatrix::new(2, 3);
         let bottom_right_entry = mat.at_mut(2, 1);
-        assert_eq!(*bottom_right_entry, Color::from_rgb(0.0, 0.0, 0.0));
+        assert_eq!(*bottom_right_entry, Color::from_rgb_f32(0.0, 0.0, 0.0));
 
-        *bottom_right_entry = Color::from_rgb(1.0, 1.0, 1.0);
-        assert_eq!(*mat.at(2, 1), Color::from_rgb(1.0, 1.0, 1.0));
+        *bottom_right_entry = Color::from_rgb_f32(1.0, 1.0, 1.0);
+        assert_eq!(*mat.at(2, 1), Color::from_rgb_f32(1.0, 1.0, 1.0));
     }
 }

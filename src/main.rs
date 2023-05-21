@@ -25,7 +25,7 @@ fn main() {
     let sphere3 = Sphere::new(5.0, Vec3::new(5.0, 5.0, -5.0));
     let plane = Plane::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 1.0, 0.0));
 
-    let material = Lambertian::new(Color::from_rgb(0.5, 0.5, 0.5));
+    let material = Lambertian::new(Color::from_rgb_f32(0.5, 0.5, 0.5));
 
     let object0 = Object {
         geometry: &sphere0,
