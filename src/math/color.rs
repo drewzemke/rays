@@ -52,6 +52,15 @@ impl Mul<&Color> for f32 {
     }
 }
 
+// rgb element-wise multiplication
+impl Mul for &Color {
+    type Output = Color;
+
+    fn mul(self, rhs: Self) -> Self::Output {
+        Color::from_rgb(self.r() * rhs.r(), self.g() * rhs.g(), self.b() * rhs.b())
+    }
+}
+
 impl From<Vec3> for Color {
     fn from(v: Vec3) -> Self {
         Color(v)
@@ -92,6 +101,13 @@ mod tests {
         let v = Vec3::new(-0.4, 1.2, 0.3);
         let c: Color = Color::from_clamped(v);
         assert_eq!(c, Color::from_rgb(0.0, 1.0, 0.3));
+    }
+
+    #[test]
+    fn multiply_colors() {
+        let c1: Color = Color::from_rgb(0.1, 0.5, 0.4);
+        let c2: Color = Color::from_rgb(0.5, 0.8, 1.0);
+        assert_eq!(&c1 * &c2, Color::from_rgb(0.05, 0.4, 0.4));
     }
 }
 
