@@ -1,6 +1,6 @@
 use crate::math::{ray::Ray, vec3::Vec3};
 
-use crate::scene::object::{IntersectRay, Intersection};
+use crate::scene::object::geometry::{IntersectRay, Intersection};
 
 #[derive(Debug)]
 pub struct Sphere {

@@ -1,6 +1,6 @@
 use crate::math::{color::Color, ray::Ray, shaping::lerp, vec3::Vec3};
 
-use self::object::{IntersectRay, Intersection};
+use self::object::geometry::{IntersectRay, Intersection};
 
 pub mod object;
 

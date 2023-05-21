@@ -1,6 +1,6 @@
 use crate::{
     math::{color::Color, ray::Ray, vec3::Vec3},
-    scene::object::Intersection,
+    scene::object::geometry::Intersection,
 };
 
 use super::ScatterRay;
