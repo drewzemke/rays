@@ -18,7 +18,15 @@ impl Lambertian {
 impl ScatterRay for Lambertian {
     fn scatter_ray(&self, _incoming_ray: Ray, intersection: Intersection) -> (Ray, &Color) {
         let random_unit = Vec3::random_unit_vector();
-        let new_ray = Ray::new(intersection.point, &intersection.normal + &random_unit);
+
+        let mut scatter_dir = &intersection.normal + &random_unit;
+
+        // reject scattered vectors that are too close to zero
+        if scatter_dir.is_small() {
+            scatter_dir = intersection.normal;
+        }
+
+        let new_ray = Ray::new(intersection.point, scatter_dir);
         (new_ray, &self.albedo)
     }
 }

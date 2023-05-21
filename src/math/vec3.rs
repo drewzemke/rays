@@ -12,6 +12,8 @@ pub struct Vec3 {
     pub z: f32,
 }
 
+const EPSILON: f32 = 1e-8;
+
 impl Vec3 {
     pub fn new(x: f32, y: f32, z: f32) -> Vec3 {
         Vec3 { x, y, z }
@@ -54,6 +56,10 @@ impl Vec3 {
         let z = t1;
 
         Vec3::new(x, y, z)
+    }
+
+    pub fn is_small(&self) -> bool {
+        self.x.abs() < EPSILON && self.y.abs() < EPSILON && self.z.abs() < EPSILON
     }
 }
 
