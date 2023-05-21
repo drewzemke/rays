@@ -25,27 +25,32 @@ fn main() {
     let sphere3 = Sphere::new(5.0, Vec3::new(5.0, 5.0, -5.0));
     let plane = Plane::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 1.0, 0.0));
 
-    let material = Lambertian::new(Color::from_rgb_f32(0.5, 0.5, 0.5));
+    let lambert_gray = Lambertian::new(Color::from_rgb_f32(0.5, 0.5, 0.5));
+    let lambert_pink = Lambertian::new(Color::from_rgb_u8(255, 121, 198));
+    // let lambert_purple = Lambertian::new(Color::from_rgb_u8(189, 147, 249));
+    let lambert_orange = Lambertian::new(Color::from_rgb_u8(255, 184, 108));
+    let lambert_green = Lambertian::new(Color::from_rgb_u8(80, 250, 123));
+    let lambert_yellow = Lambertian::new(Color::from_rgb_u8(241, 250, 140));
 
     let object0 = Object {
         geometry: &sphere0,
-        material: &material,
+        material: &lambert_pink,
     };
     let object1 = Object {
         geometry: &sphere1,
-        material: &material,
+        material: &lambert_green,
     };
     let object2 = Object {
         geometry: &sphere2,
-        material: &material,
+        material: &lambert_yellow,
     };
     let object3 = Object {
         geometry: &sphere3,
-        material: &material,
+        material: &lambert_orange,
     };
     let object4 = Object {
         geometry: &plane,
-        material: &material,
+        material: &lambert_gray,
     };
 
     let scene = Scene::new(vec![&object0, &object1, &object2, &object3, &object4]);
