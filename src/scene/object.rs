@@ -1,6 +1,7 @@
 use crate::math::{ray::Ray, vec3::Vec3};
 
 pub mod geometry;
+pub mod material;
 
 #[derive(Debug, PartialEq)]
 pub struct Intersection {
