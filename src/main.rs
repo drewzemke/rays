@@ -1,10 +1,14 @@
 use image::{ImageBuffer, Rgb};
 use rays::{
     camera::Camera,
-    math::vec3::Vec3,
+    math::{color::Color, vec3::Vec3},
     render::render,
     scene::{
-        object::geometry::{plane::Plane, sphere::Sphere},
+        object::{
+            geometry::{plane::Plane, sphere::Sphere},
+            material::lambertian::Lambertian,
+            Object,
+        },
         Scene,
     },
 };
@@ -15,16 +19,36 @@ fn main() {
     let output_height = 500;
 
     // scene setup
-    let scene = Scene::new(vec![
-        Box::new(Sphere::new(1.0, Vec3::new(1.0, 1.0, 0.0))),
-        Box::new(Sphere::new(0.5, Vec3::new(-1.0, 0.5, -2.0))),
-        Box::new(Sphere::new(0.5, Vec3::new(-2.0, 0.5, 1.0))),
-        Box::new(Sphere::new(5.0, Vec3::new(5.0, 5.0, -5.0))),
-        Box::new(Plane::new(
-            Vec3::new(0.0, 0.0, 0.0),
-            Vec3::new(0.0, 1.0, 0.0),
-        )),
-    ]);
+    let sphere0 = Sphere::new(1.0, Vec3::new(1.0, 1.0, 0.0));
+    let sphere1 = Sphere::new(0.5, Vec3::new(-1.0, 0.5, -2.0));
+    let sphere2 = Sphere::new(0.5, Vec3::new(-2.0, 0.5, 1.0));
+    let sphere3 = Sphere::new(5.0, Vec3::new(5.0, 5.0, -5.0));
+    let plane = Plane::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 1.0, 0.0));
+
+    let material = Lambertian::new(Color::from_rgb(0.5, 0.5, 0.5));
+
+    let object0 = Object {
+        geometry: &sphere0,
+        material: &material,
+    };
+    let object1 = Object {
+        geometry: &sphere1,
+        material: &material,
+    };
+    let object2 = Object {
+        geometry: &sphere2,
+        material: &material,
+    };
+    let object3 = Object {
+        geometry: &sphere3,
+        material: &material,
+    };
+    let object4 = Object {
+        geometry: &plane,
+        material: &material,
+    };
+
+    let scene = Scene::new(vec![&object0, &object1, &object2, &object3, &object4]);
 
     // camera setup
     // QUESTION: should this be part of scene?

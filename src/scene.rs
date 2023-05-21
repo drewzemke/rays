@@ -1,15 +1,15 @@
 use crate::math::{color::Color, ray::Ray, shaping::lerp, vec3::Vec3};
 
-use self::object::geometry::{IntersectRay, Intersection};
+use self::object::{geometry::Intersection, Object};
 
 pub mod object;
 
-pub struct Scene {
-    objects: Vec<Box<dyn IntersectRay>>,
+pub struct Scene<'a> {
+    objects: Vec<&'a Object<'a>>,
 }
 
-impl Scene {
-    pub fn new(objects: Vec<Box<dyn IntersectRay>>) -> Scene {
+impl<'a> Scene<'a> {
+    pub fn new(objects: Vec<&'a Object>) -> Scene<'a> {
         Scene { objects }
     }
 
@@ -20,28 +20,33 @@ impl Scene {
             return Color::from_rgb(0.0, 0.0, 0.0);
         }
 
+        // HACK: do we need to store both of these?
         let mut closest_intersection = None;
+        let mut closest_object = None;
 
         for object in self.objects.as_slice().iter() {
-            let current_intersection = object.intersect_ray(&ray);
+            let current_intersection = object.geometry.intersect_ray(&ray);
 
             if let Some(Intersection { t: current_t, .. }) = current_intersection {
                 match closest_intersection {
                     // Don't update the closest intersection only if a larger t was found
                     Some(Intersection { t: closest_t, .. }) if current_t > closest_t => {}
-                    _ => closest_intersection = current_intersection,
+                    _ => {
+                        closest_intersection = current_intersection;
+                        closest_object = Some(object);
+                    }
                 }
             }
         }
 
         match closest_intersection {
             Some(intersection) => {
-                // TODO: modulate by object color
-                // generate a diffuse vector, and run it back
-                let random_unit = Vec3::random_unit_vector();
-                let new_ray = Ray::new(intersection.point, &intersection.normal + &random_unit);
+                let (scattered_ray, reflection_color) = closest_object
+                    .unwrap()
+                    .material
+                    .scatter_ray(ray, intersection);
 
-                0.5 * &self.color_for_ray(new_ray, bounce_depth - 1)
+                reflection_color * &self.color_for_ray(scattered_ray, bounce_depth - 1)
             }
             None => self.sky_color_for_direction(ray.dir),
         }
