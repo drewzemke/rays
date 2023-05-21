@@ -17,7 +17,7 @@ impl<'a> Scene<'a> {
     // maybe scene should only handle single ray intersections, not the recursion? idk
     pub fn color_for_ray(&self, ray: Ray, bounce_depth: u32) -> Color {
         if bounce_depth == 0 {
-            return Color::from_rgb_f32(0.0, 0.0, 0.0);
+            return Color::from_rgb_u8(0, 0, 0);
         }
 
         // HACK: do we need to store both of these?

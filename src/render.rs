@@ -18,7 +18,7 @@ pub fn render(
     // compute pixel values
     for pixel_x in 0..output_width {
         for pixel_y in 0..output_height {
-            let mut accumulated_color = Color::from_rgb_f32(0.0, 0.0, 0.0);
+            let mut accumulated_color = Color::from_rgb_u8(0, 0, 0);
             for _ in 0..samples_per_pixel {
                 let ray = camera.ray_for_pixel(pixel_x, pixel_y);
                 accumulated_color = &accumulated_color + &scene.color_for_ray(ray, bounce_depth);

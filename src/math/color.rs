@@ -15,6 +15,14 @@ impl Color {
         Color(Vec3 { x: r, y: g, z: b })
     }
 
+    pub fn from_rgb_u8(r: u8, g: u8, b: u8) -> Color {
+        Color(Vec3 {
+            x: r as f32 / 255.0,
+            y: g as f32 / 255.0,
+            z: b as f32 / 255.0,
+        })
+    }
+
     pub fn r(&self) -> f32 {
         self.0.x
     }
@@ -117,7 +125,7 @@ pub struct ColorMatrix(Vec<Vec<Color>>);
 
 impl ColorMatrix {
     pub fn new(width: usize, height: usize) -> ColorMatrix {
-        let default_color = Color::from_rgb_f32(0.0, 0.0, 0.0);
+        let default_color = Color::from_rgb_u8(0, 0, 0);
         let row = vec![default_color; width];
         ColorMatrix(vec![row; height])
     }
