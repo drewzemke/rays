@@ -1,5 +1,6 @@
-use crate::math::ray::{IntersectRay, Intersection, Ray};
+use crate::math::ray::Ray;
 use crate::math::vec3::Vec3;
+use crate::scene::object::{IntersectRay, Intersection};
 
 pub struct Plane {
     basepoint: Vec3,

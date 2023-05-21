@@ -4,7 +4,7 @@ use rays::{
     math::vec3::Vec3,
     render::render,
     scene::{
-        object::{plane::Plane, sphere::Sphere},
+        object::geometry::{plane::Plane, sphere::Sphere},
         Scene,
     },
 };

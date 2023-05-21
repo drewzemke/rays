@@ -1,9 +1,6 @@
-use crate::math::{
-    color::Color,
-    ray::{IntersectRay, Intersection, Ray},
-    shaping::lerp,
-    vec3::Vec3,
-};
+use crate::math::{color::Color, ray::Ray, shaping::lerp, vec3::Vec3};
+
+use self::object::{IntersectRay, Intersection};
 
 pub mod object;
 
