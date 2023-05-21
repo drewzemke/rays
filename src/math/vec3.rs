@@ -61,6 +61,11 @@ impl Vec3 {
     pub fn is_small(&self) -> bool {
         self.x.abs() < EPSILON && self.y.abs() < EPSILON && self.z.abs() < EPSILON
     }
+
+    // named `unit_normal` because it should be unit length :)
+    pub fn reflect(incident: &Vec3, unit_normal: &Vec3) -> Vec3 {
+        incident - &(2.0 * Vec3::dot(incident, unit_normal) * unit_normal)
+    }
 }
 
 impl Add for &Vec3 {
@@ -159,5 +164,21 @@ mod tests {
         // we can't really verify that this is randomly distributed, unfortunately
         assert!(v.length() - 1.0 < 0.00000001)
         // yay for float comparison
+    }
+
+    #[test]
+    fn reflect_vector() {
+        let n = Vec3::new(0.0, 0.0, 1.0);
+        let v = Vec3::new(3.0, 2.0, -1.0);
+        assert_eq!(Vec3::reflect(&v, &n), Vec3::new(3.0, 2.0, 1.0));
+    }
+
+    #[test]
+    fn reflected_vector_dot_product_invariant() {
+        let n = Vec3::random_unit_vector();
+        let v1 = Vec3::random_unit_vector();
+        let v2 = Vec3::reflect(&v1, &n);
+        // (n . v1) should equal (- n . v2)
+        assert!(Vec3::dot(&n, &v1) + Vec3::dot(&n, &v2) < 1e-6);
     }
 }
