@@ -55,6 +55,12 @@ impl<'a> Scene<'a> {
                     .material
                     .scatter_ray(ray, intersection);
 
+                // TODO:
+                // reject this (return black or something) if the scattered day points opposite (negative dot product)
+                // the normal of the surface
+                // if Vec3::dot(&scattered_ray.dir, &intersection.normal) < 0.0 {
+                //
+                // }
                 reflection_color * &self.color_for_ray(scattered_ray, bounce_depth - 1)
             }
             None => self.sky_color_for_direction(ray.dir),

@@ -23,14 +23,15 @@ fn main() {
     let sphere1 = Sphere::new(0.5, Vec3::new(-1.0, 0.5, -2.0));
     let sphere2 = Sphere::new(0.5, Vec3::new(-2.0, 0.5, 1.0));
     let sphere3 = Sphere::new(5.0, Vec3::new(5.0, 5.0, -5.0));
+    // let plane = Plane::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 1.0, 0.0));
     let plane = Plane::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 1.0, 0.0));
 
     let lambert_gray = Lambertian::new(Color::from_rgb_f32(0.5, 0.5, 0.5));
     let lambert_pink = Lambertian::new(Color::from_rgb_u8(255, 121, 198));
     // let lambert_purple = Lambertian::new(Color::from_rgb_u8(189, 147, 249));
     let lambert_green = Lambertian::new(Color::from_rgb_u8(80, 250, 123));
-    let metal_yellow = Metal::new(Color::from_rgb_u8(241, 250, 140));
-    let metal_orange = Metal::new(Color::from_rgb_u8(255, 184, 108));
+    let metal_yellow = Metal::new(Color::from_rgb_u8(241, 250, 140), 0.1);
+    let metal_orange = Metal::new(Color::from_rgb_u8(255, 184, 108), 0.5);
 
     let object0 = Object {
         geometry: &sphere0,
@@ -66,8 +67,8 @@ fn main() {
     );
 
     // render
-    let samples_per_pixel = 5;
-    let bounce_depth = 4;
+    let samples_per_pixel = 10;
+    let bounce_depth = 10;
 
     let color_mat = render(
         scene,
