@@ -49,11 +49,11 @@ impl<'a> Scene<'a> {
         }
 
         match closest_intersection {
-            Some(intersection) => {
+            Some(ref intersection) => {
                 let (scattered_ray, reflection_color) = closest_object
                     .unwrap()
                     .material
-                    .scatter_ray(ray, intersection);
+                    .scatter_ray(&ray, intersection);
 
                 // TODO:
                 // reject this (return black or something) if the scattered day points opposite (negative dot product)
