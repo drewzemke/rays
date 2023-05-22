@@ -40,7 +40,7 @@ impl Vec3 {
     // are uniformly distributed on the unit sphere.
     pub fn random_unit_vector() -> Vec3 {
         let mut rng = rand::thread_rng();
-        // generate two numbers in [0,1]
+        // generate two numbers in [0,1)
         let s: f32 = rng.gen();
         let t: f32 = rng.gen();
 
@@ -56,6 +56,22 @@ impl Vec3 {
         let z = t1;
 
         Vec3::new(x, y, z)
+    }
+
+    pub fn random_subunit_vector() -> Vec3 {
+        // take a random unit vector and scale it down by a random amount
+        let mut rng = rand::thread_rng();
+        let unit_vec = Vec3::random_unit_vector();
+
+        // generate a number in [0,1)
+        let r: f32 = rng.gen();
+
+        // scaling by r yields a non-uniform distribution, since vectors
+        // close to the center of the unit ball are more likely.
+        // scaling by the cube root of r gives the correct distribution
+        r.powf(1.0 / 3.0) * &unit_vec
+
+        // FIXME: it's probably fine to replace the exponent with 0.333333333, right?
     }
 
     pub fn is_small(&self) -> bool {
@@ -161,9 +177,16 @@ mod tests {
     #[test]
     fn create_unit_vec() {
         let v = Vec3::random_unit_vector();
-        // we can't really verify that this is randomly distributed, unfortunately
+        // we can't easily verify that this is uniformly distributed, unfortunately
         assert!(v.length() - 1.0 < 0.00000001)
         // yay for float comparison
+    }
+
+    #[test]
+    fn create_subunit_vec() {
+        let v = Vec3::random_subunit_vector();
+        // again, it'd be really obnixous to check that this is uniformly distributed
+        assert!(v.length() < 1.0)
     }
 
     #[test]
