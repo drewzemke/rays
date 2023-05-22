@@ -8,6 +8,10 @@ pub struct Scene<'a> {
     objects: Vec<&'a Object<'a>>,
 }
 
+// the shortest distance a ray can travel before intersections are allowed.
+// helps avoid floating points obnoxiousness
+const RAY_MIN_T: f32 = 0.0001;
+
 impl<'a> Scene<'a> {
     pub fn new(objects: Vec<&'a Object>) -> Scene<'a> {
         Scene { objects }
@@ -24,10 +28,15 @@ impl<'a> Scene<'a> {
         let mut closest_intersection = None;
         let mut closest_object = None;
 
-        for object in self.objects.as_slice().iter() {
+        for object in self.objects.iter() {
             let current_intersection = object.geometry.intersect_ray(&ray);
 
             if let Some(Intersection { t: current_t, .. }) = current_intersection {
+                // reject this intersection if its t value is too small
+                if current_t < RAY_MIN_T {
+                    continue;
+                }
+
                 match closest_intersection {
                     // Don't update the closest intersection only if a larger t was found
                     Some(Intersection { t: closest_t, .. }) if current_t > closest_t => {}
