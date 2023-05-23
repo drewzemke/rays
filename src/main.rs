@@ -30,8 +30,8 @@ fn main() {
     let lambert_pink = Lambertian::new(Color::from_rgb_u8(255, 121, 198));
     // let lambert_purple = Lambertian::new(Color::from_rgb_u8(189, 147, 249));
     let lambert_green = Lambertian::new(Color::from_rgb_u8(80, 250, 123));
-    let metal_yellow = Metal::new(Color::from_rgb_u8(241, 250, 140), 0.1);
-    let metal_orange = Metal::new(Color::from_rgb_u8(255, 184, 108), 0.5);
+    let metal_yellow = Metal::new(Color::from_rgb_u8(241, 250, 140), 0.4);
+    let metal_orange = Metal::new(Color::from_rgb_u8(255, 184, 108), 0.3);
 
     let object0 = Object {
         geometry: &sphere0,
@@ -59,15 +59,15 @@ fn main() {
     // camera setup
     // QUESTION: should this be part of scene?
     let camera = Camera::new(
+        Vec3::new(0.0, 0.7, 6.0),
+        Vec3::new(0.0, 1.2, 0.0),
+        60.0,
         output_width,
         output_height,
-        4.0,
-        4.0,
-        Vec3::new(0.0, 1.0, 4.0),
     );
 
     // render
-    let samples_per_pixel = 10;
+    let samples_per_pixel = 20;
     let bounce_depth = 10;
 
     let color_mat = render(

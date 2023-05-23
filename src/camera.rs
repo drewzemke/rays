@@ -17,26 +17,32 @@ pub struct Camera {
 
 impl Camera {
     pub fn new(
+        position: Vec3,
+        target: Vec3,
+        // horizontal fov
+        field_of_view_degrees: f32,
         output_width: u32,
         output_height: u32,
-        viewport_width: f32,
-        focal_length: f32,
-        position: Vec3,
     ) -> Camera {
-        // camera setup (all in world units)
-        // currently facing down the (negative) z-axis
+        // calculate the camera frame
+        let global_up = Vec3::new(0.0, 1.0, 0.0);
+        let camera_forward_unit = (&target - &position).normalize();
+        let camera_right_unit = Vec3::cross(&camera_forward_unit, &global_up).normalize();
+        let camera_up_unit = Vec3::cross(&camera_right_unit, &camera_forward_unit);
+
+        // only need to set horizontal and vertical widths, keep the camera z-length as 1
         let aspect_ratio = (output_width as f32) / (output_height as f32);
+        let viewport_width = (field_of_view_degrees / 2.0).to_radians().tan();
         let viewport_height = viewport_width / aspect_ratio;
 
-        let camera_right = Vec3::new(viewport_width, 0.0, 0.0);
-        let camera_up = Vec3::new(0.0, viewport_height, 0.0);
-        let camera_forward = Vec3::new(0.0, 0.0, -focal_length);
+        let camera_right = viewport_width * &camera_right_unit;
+        let camera_up = viewport_height * &camera_up_unit;
 
         Camera {
             output_width,
             output_height,
             position,
-            camera_forward,
+            camera_forward: camera_forward_unit,
             camera_right,
             camera_up,
         }
