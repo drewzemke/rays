@@ -83,3 +83,40 @@ fn main() {
     let img_buffer: ImageBuffer<Rgb<u8>, Vec<u8>> = color_mat.into();
     img_buffer.save("target/debug/img_out/render.png").unwrap();
 }
+
+// TODO: find a better way to manage this!
+// steel balls scene
+// let sphere0 = Sphere::new(1.0, Vec3::new(0.0, 1.0, 0.0));
+// let sphere1 = Sphere::new(1.0, Vec3::new(2.0, 1.0, 0.0));
+// let sphere2 = Sphere::new(1.0, Vec3::new(1.0, 1.0, f32::sqrt(3.0)));
+// let sphere3 = Sphere::new(
+//     1.0,
+//     Vec3::new(1.0, 2.0 * f32::sqrt(6.0) / 3.0 + 1.0, f32::sqrt(3.0) / 3.0),
+// );
+// let plane = Plane::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 1.0, 0.0));
+
+// let ball_mat = Metal::new(Color::from_rgb_u8(241, 231, 221), 0.7);
+// let floor_mat = Metal::new(Color::from_rgb_u8(8, 11, 14), 0.5);
+
+// let object0 = Object {
+//     geometry: &sphere0,
+//     material: &ball_mat,
+// };
+// let object1 = Object {
+//     geometry: &sphere1,
+//     material: &ball_mat,
+// };
+// let object2 = Object {
+//     geometry: &sphere2,
+//     material: &ball_mat,
+// };
+// let object3 = Object {
+//     geometry: &sphere3,
+//     material: &ball_mat,
+// };
+// let object4 = Object {
+//     geometry: &plane,
+//     material: &floor_mat,
+// };
+
+// let scene = Scene::new(vec![&object0, &object1, &object2, &object3, &object4]);
