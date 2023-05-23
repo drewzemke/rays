@@ -27,6 +27,14 @@ impl Vec3 {
         u.x * v.x + u.y * v.y + u.z * v.z
     }
 
+    pub fn cross(u: &Vec3, v: &Vec3) -> Vec3 {
+        Vec3::new(
+            u.y * v.z - u.z * v.y,
+            u.z * v.x - u.x * v.z,
+            u.x * v.y - u.y * v.x,
+        )
+    }
+
     pub fn length(&self) -> f32 {
         Vec3::dot(self, self).powf(0.5)
     }
@@ -160,6 +168,16 @@ mod tests {
         let u = Vec3::new(1.0, 2.0, 3.0);
         let v = Vec3::new(0.0, 4.0, 8.0);
         assert_eq!(Vec3::dot(&u, &v), 32.0)
+    }
+
+    #[test]
+    fn cross_vec() {
+        let i = Vec3::new(1.0, 0.0, 0.0);
+        let j = Vec3::new(0.0, 1.0, 0.0);
+        let k = Vec3::new(0.0, 0.0, 1.0);
+        assert_eq!(Vec3::cross(&i, &j), k);
+        assert_eq!(Vec3::cross(&j, &k), i);
+        assert_eq!(Vec3::cross(&k, &i), j);
     }
 
     #[test]
