@@ -17,7 +17,7 @@ pub struct Intersection {
     // whether the ray is passing through the surface opposite the direction of the normal
     // at the intersection point
     // (it's easier to compute and store this during intersection computation, rather than later)
-    pub into_surface: bool,
+    pub is_into_surface: bool,
 }
 
 pub trait IntersectRay {

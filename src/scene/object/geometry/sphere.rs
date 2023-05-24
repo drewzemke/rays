@@ -54,7 +54,7 @@ impl IntersectRay for Sphere {
                 point,
                 normal,
                 t,
-                into_surface,
+                is_into_surface: into_surface,
             })
         } else {
             None
@@ -79,7 +79,7 @@ mod tests {
                 point: Vec3::new(0.0, 0.0, -1.0),
                 normal: Vec3::new(0.0, 0.0, -1.0),
                 t: 2.0,
-                into_surface: true
+                is_into_surface: true
             })
         )
     }

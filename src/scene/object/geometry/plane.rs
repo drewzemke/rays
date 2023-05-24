@@ -27,7 +27,7 @@ impl IntersectRay for Plane {
                 point: ray.at(t),
                 normal: self.normal.clone(),
                 t,
-                into_surface: normal_vs_displ > 0.0 && normal_vs_dir < 0.0,
+                is_into_surface: normal_vs_displ > 0.0 && normal_vs_dir < 0.0,
             })
         } else {
             None
@@ -59,7 +59,7 @@ mod tests {
                 point: Vec3::new(0.0, 1.0, 0.0),
                 normal: Vec3::new(0.0, 0.0, 1.0),
                 t: 3.0,
-                into_surface: true
+                is_into_surface: true
             })
         )
     }
