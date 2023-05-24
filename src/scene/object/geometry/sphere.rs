@@ -29,15 +29,16 @@ impl IntersectRay for Sphere {
 
         let disc = q_b * q_b - 4.0 * q_a * q_c;
         if disc >= 0.0 {
-            // if ||a-c|| < r, the ray originated inside the sphere, so the
-            // larger of the two solutions to the quadratic equation is the
+            // if ||a-c|| ~= r, the ray originated inside the sphere,
+            // and if the (a-c).b is negative then the ray is pointing into the sphere,
+            // so the larger of the two solutions to the quadratic equation is the
             // only positive solution
             let t;
             let into_surface;
 
             // HACK: subtracting the 0.0001 dodges some floating point oddities
             //   it'd be better to have a more global / general solution
-            if a_min_c.length() < r - 0.0001 {
+            if q_c.abs() < 0.0001 && q_b < 0.0 {
                 t = (-q_b + disc.powf(0.5)) / (2.0 * q_a);
                 into_surface = false;
             } else {
