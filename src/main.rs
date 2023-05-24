@@ -23,11 +23,12 @@ fn main() {
     let sphere1 = Sphere::new(0.5, Vec3::new(-1.0, 0.5, -2.0));
     let sphere2 = Sphere::new(0.5, Vec3::new(-2.0, 0.5, 1.0));
     let sphere3 = Sphere::new(5.0, Vec3::new(5.0, 5.0, -5.0));
+    let sphere4 = Sphere::new(0.75, Vec3::new(-0.75, 0.75, 2.0));
     // let plane = Plane::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 1.0, 0.0));
     let plane = Plane::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 1.0, 0.0));
 
     let lambert_gray = Lambertian::new(Color::from_rgb_f32(0.5, 0.5, 0.5));
-    // let lambert_pink = Lambertian::new(Color::from_rgb_u8(255, 121, 198));
+    let lambert_pink = Lambertian::new(Color::from_rgb_u8(255, 121, 198));
     // let lambert_purple = Lambertian::new(Color::from_rgb_u8(189, 147, 249));
     let lambert_green = Lambertian::new(Color::from_rgb_u8(80, 250, 123));
     let metal_yellow = Metal::new(Color::from_rgb_u8(241, 250, 140), 0.4);
@@ -37,7 +38,7 @@ fn main() {
 
     let object0 = Object {
         geometry: &sphere0,
-        material: &glass,
+        material: &lambert_pink,
     };
     let object1 = Object {
         geometry: &sphere1,
@@ -55,8 +56,14 @@ fn main() {
         geometry: &plane,
         material: &lambert_gray,
     };
+    let object5 = Object {
+        geometry: &sphere4,
+        material: &glass,
+    };
 
-    let scene = Scene::new(vec![&object0, &object1, &object2, &object3, &object4]);
+    let scene = Scene::new(vec![
+        &object0, &object1, &object2, &object3, &object4, &object5,
+    ]);
 
     // camera setup
     // QUESTION: should this be part of scene?
