@@ -32,7 +32,15 @@ impl ScatterRay for Metal {
         //   than long ones. Maybe that isn't a problem though
         let displaced_reflection = &(self.fuzz * &random_subunit) + &reflect_direction;
 
-        let new_ray = Ray::new(intersection.point.clone(), displaced_reflection);
-        Some((new_ray, &self.albedo))
+        // absorb this ray if the scattered ray points opposite (negative dot product)
+        // the normal of the surface
+        if Vec3::dot(&displaced_reflection, &intersection.normal) < 0.0 {
+            None
+        } else {
+            Some((
+                Ray::new(intersection.point.clone(), displaced_reflection),
+                &self.albedo,
+            ))
+        }
     }
 }
