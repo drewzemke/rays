@@ -21,8 +21,8 @@ impl IntersectRay for Plane {
         // This condition makes planes two sided.
         // For one sided intersections, replace with this:
         //    normal_vs_displ > 0.0 && normal_vs_dir < 0.0
-        if normal_vs_dir != 0.0 {
-            let t = -normal_vs_displ / normal_vs_dir;
+        let t = -normal_vs_displ / normal_vs_dir;
+        if t > 0.0 {
             Some(Intersection {
                 point: ray.at(t),
                 normal: self.normal.clone(),
