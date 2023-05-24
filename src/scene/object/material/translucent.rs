@@ -20,7 +20,11 @@ impl Translucent {
 }
 
 impl ScatterRay for Translucent {
-    fn scatter_ray(&self, incoming_ray: &Ray, intersection: &Intersection) -> (Ray, &Color) {
+    fn scatter_ray(
+        &self,
+        incoming_ray: &Ray,
+        intersection: &Intersection,
+    ) -> Option<(Ray, &Color)> {
         let refracted_dir = Vec3::refract(
             &incoming_ray.dir,
             &intersection.normal,
@@ -31,6 +35,6 @@ impl ScatterRay for Translucent {
         let new_ray = Ray::new(intersection.point.clone(), refracted_dir);
 
         // return white as the color
-        (new_ray, &self.albedo)
+        Some((new_ray, &self.albedo))
     }
 }

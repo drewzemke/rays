@@ -17,7 +17,11 @@ impl Metal {
 }
 
 impl ScatterRay for Metal {
-    fn scatter_ray(&self, incoming_ray: &Ray, intersection: &Intersection) -> (Ray, &Color) {
+    fn scatter_ray(
+        &self,
+        incoming_ray: &Ray,
+        intersection: &Intersection,
+    ) -> Option<(Ray, &Color)> {
         let reflect_direction = Vec3::reflect(&incoming_ray.dir, &intersection.normal);
 
         // generate a random vector with length < 1 to use to displace the reflection vector
@@ -29,6 +33,6 @@ impl ScatterRay for Metal {
         let displaced_reflection = &(self.fuzz * &random_subunit) + &reflect_direction;
 
         let new_ray = Ray::new(intersection.point.clone(), displaced_reflection);
-        (new_ray, &self.albedo)
+        Some((new_ray, &self.albedo))
     }
 }

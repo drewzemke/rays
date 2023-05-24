@@ -50,17 +50,21 @@ impl<'a> Scene<'a> {
 
         match closest_intersection {
             Some(ref intersection) => {
-                let (scattered_ray, reflection_color) = closest_object
+                match closest_object
                     .unwrap()
                     .material
-                    .scatter_ray(&ray, intersection);
-
-                // absorb this ray (return black) if the scattered ray points opposite (negative dot product)
-                // the normal of the surface
-                if Vec3::dot(&scattered_ray.dir, &intersection.normal) < 0.0 {
-                    return Color::from_rgb_u8(0, 0, 0);
+                    .scatter_ray(&ray, intersection)
+                {
+                    Some((scattered_ray, reflection_color)) => {
+                        // absorb this ray (return black) if the scattered ray points opposite (negative dot product)
+                        // the normal of the surface
+                        if Vec3::dot(&scattered_ray.dir, &intersection.normal) < 0.0 {
+                            return Color::from_rgb_u8(0, 0, 0);
+                        }
+                        reflection_color * &self.color_for_ray(scattered_ray, bounce_depth - 1)
+                    }
+                    None => Color::from_rgb_u8(0, 0, 0),
                 }
-                reflection_color * &self.color_for_ray(scattered_ray, bounce_depth - 1)
             }
             None => self.sky_color_for_direction(ray.dir),
         }
