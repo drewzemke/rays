@@ -6,7 +6,7 @@ use rays::{
     scene::{
         object::{
             geometry::{plane::Plane, sphere::Sphere},
-            material::{lambertian::Lambertian, metal::Metal},
+            material::{lambertian::Lambertian, metal::Metal, translucent::Translucent},
             Object,
         },
         Scene,
@@ -27,15 +27,17 @@ fn main() {
     let plane = Plane::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 1.0, 0.0));
 
     let lambert_gray = Lambertian::new(Color::from_rgb_f32(0.5, 0.5, 0.5));
-    let lambert_pink = Lambertian::new(Color::from_rgb_u8(255, 121, 198));
+    // let lambert_pink = Lambertian::new(Color::from_rgb_u8(255, 121, 198));
     // let lambert_purple = Lambertian::new(Color::from_rgb_u8(189, 147, 249));
     let lambert_green = Lambertian::new(Color::from_rgb_u8(80, 250, 123));
     let metal_yellow = Metal::new(Color::from_rgb_u8(241, 250, 140), 0.4);
     let metal_orange = Metal::new(Color::from_rgb_u8(255, 184, 108), 0.3);
 
+    let glass = Translucent::new(1.5);
+
     let object0 = Object {
         geometry: &sphere0,
-        material: &lambert_pink,
+        material: &glass,
     };
     let object1 = Object {
         geometry: &sphere1,
