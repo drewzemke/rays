@@ -29,12 +29,32 @@ impl IntersectRay for Sphere {
 
         let disc = q_b * q_b - 4.0 * q_a * q_c;
         if disc >= 0.0 {
-            // take the closest intersection to the camera
-            let t = (-q_b - disc.powf(0.5)) / (2.0 * q_a);
+            // if ||a-c|| < r, the ray originated inside the sphere, so the
+            // larger of the two solutions to the quadratic equation is the
+            // only positive solution
+            let t;
+            let into_surface;
+
+            // HACK: subtracting the 0.0001 dodges some floating point oddities
+            //   it'd be better to have a more global / general solution
+            if a_min_c.length() < r - 0.0001 {
+                t = (-q_b + disc.powf(0.5)) / (2.0 * q_a);
+                into_surface = false;
+            } else {
+                t = (-q_b - disc.powf(0.5)) / (2.0 * q_a);
+                into_surface = true;
+            }
+
+            // otherwise, the smaller of the two solutions is the first one along the ray
 
             let point = ray.at(t);
             let normal = (&point - c).normalize();
-            Some(Intersection { point, normal, t })
+            Some(Intersection {
+                point,
+                normal,
+                t,
+                into_surface,
+            })
         } else {
             None
         }
@@ -57,7 +77,8 @@ mod tests {
             Some(Intersection {
                 point: Vec3::new(0.0, 0.0, -1.0),
                 normal: Vec3::new(0.0, 0.0, -1.0),
-                t: 2.0
+                t: 2.0,
+                into_surface: true
             })
         )
     }
