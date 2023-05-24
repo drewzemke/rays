@@ -32,7 +32,7 @@ impl<'a> Scene<'a> {
             let current_intersection = object.geometry.intersect_ray(&ray);
 
             if let Some(Intersection { t: current_t, .. }) = current_intersection {
-                // reject this intersection if its t value is too small
+                // reject this intersection if its t value is too small or negative
                 if current_t < RAY_MIN_T {
                     continue;
                 }
@@ -58,7 +58,10 @@ impl<'a> Scene<'a> {
                     Some((scattered_ray, reflection_color)) => {
                         reflection_color * &self.color_for_ray(scattered_ray, bounce_depth - 1)
                     }
-                    None => Color::from_rgb_u8(0, 0, 0),
+                    None => {
+                        // This line only gets hit there's a closest intersection but no closest object... feels like a HACK !
+                        Color::from_rgb_u8(0, 0, 0)
+                    }
                 }
             }
             None => self.sky_color_for_direction(ray.dir),
