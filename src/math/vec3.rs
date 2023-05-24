@@ -90,6 +90,18 @@ impl Vec3 {
     pub fn reflect(incident: &Vec3, unit_normal: &Vec3) -> Vec3 {
         incident - &(2.0 * Vec3::dot(incident, unit_normal) * unit_normal)
     }
+
+    // assumes that the normal is oriented from the volume with refractive index n_2
+    // towards the volume with index n_1
+    pub fn refract(incident: &Vec3, normal: &Vec3, n_out: f32, n_in: f32) -> Vec3 {
+        let unit_incident = incident.normalize();
+        let dot = Vec3::dot(&unit_incident, normal);
+
+        // parallel and perpendicular components to the surface
+        let refracted_parallel = (n_out / n_in) * &(&unit_incident + &(-dot * normal));
+        let refracted_perp = -(1.0 - refracted_parallel.length().powi(2)).sqrt() * normal;
+        &refracted_parallel + &refracted_perp
+    }
 }
 
 impl Add for &Vec3 {
@@ -221,5 +233,22 @@ mod tests {
         let v2 = Vec3::reflect(&v1, &n);
         // (n . v1) should equal (- n . v2)
         assert!(Vec3::dot(&n, &v1) + Vec3::dot(&n, &v2) < 1e-6);
+    }
+
+    #[test]
+    fn refracted_vector_snells_law() {
+        let n = Vec3::random_unit_vector();
+        let v1 = Vec3::random_unit_vector();
+
+        let n_out = 1.0;
+        let n_in = 1.3;
+        let v2 = Vec3::refract(&v1, &n, n_out, n_in);
+
+        // sin = sqrt(1-cos^2), and cos is the dot product
+        let sin_out = (1.0 - Vec3::dot(&(-&v1), &n).powi(2)).sqrt();
+        let sin_in = (1.0 - Vec3::dot(&v2, &(-&n)).powi(2)).sqrt();
+
+        // snell's law
+        assert!(n_in * sin_in - n_out * sin_out < 1e-6)
     }
 }
