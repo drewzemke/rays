@@ -31,19 +31,26 @@ impl ScatterRay for Translucent {
             self.refractive_index
         };
 
-        let normal_sign = if intersection.is_into_surface {
+        let cos_theta =
+            Vec3::dot(&incoming_ray.dir, &intersection.normal) / incoming_ray.dir.length();
+        let sin_theta = (1.0 - cos_theta.powi(2)).sqrt();
+
+        // this condition checks if total internal reflection is in effect
+        let must_reflect = refractive_ratio * sin_theta > 1.0;
+
+        let normal = (if intersection.is_into_surface {
             1.0
         } else {
             -1.0
+        }) * &intersection.normal;
+
+        let new_ray_dir = if must_reflect {
+            Vec3::reflect(&incoming_ray.dir, &normal)
+        } else {
+            Vec3::refract(&incoming_ray.dir, &normal, refractive_ratio)
         };
 
-        let refracted_dir = Vec3::refract(
-            &incoming_ray.dir,
-            &(normal_sign * &intersection.normal),
-            refractive_ratio,
-        );
-
-        let new_ray = Ray::new(intersection.point.clone(), refracted_dir);
+        let new_ray = Ray::new(intersection.point.clone(), new_ray_dir);
 
         // return white as the color
         Some((new_ray, &self.albedo))
