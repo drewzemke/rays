@@ -91,14 +91,14 @@ impl Vec3 {
         incident - &(2.0 * Vec3::dot(incident, unit_normal) * unit_normal)
     }
 
-    // assumes that the normal is oriented from the volume with refractive index n_2
-    // towards the volume with index n_1
-    pub fn refract(incident: &Vec3, normal: &Vec3, n_out: f32, n_in: f32) -> Vec3 {
+    // the refractive index is n_out/n_in, and we assume that the normal is
+    // oriented from the volume with refractive index n_out towards the volume with index n_in
+    pub fn refract(incident: &Vec3, normal: &Vec3, refractive_index: f32) -> Vec3 {
         let unit_incident = incident.normalize();
         let dot = Vec3::dot(&unit_incident, normal);
 
         // parallel and perpendicular components to the surface
-        let refracted_parallel = (n_out / n_in) * &(&unit_incident + &(-dot * normal));
+        let refracted_parallel = refractive_index * &(&unit_incident + &(-dot * normal));
         let refracted_perp = -(1.0 - refracted_parallel.length().powi(2)).sqrt() * normal;
         &refracted_parallel + &refracted_perp
     }
@@ -242,7 +242,7 @@ mod tests {
 
         let n_out = 1.0;
         let n_in = 1.3;
-        let v2 = Vec3::refract(&v1, &n, n_out, n_in);
+        let v2 = Vec3::refract(&v1, &n, n_out / n_in);
 
         // sin = sqrt(1-cos^2), and cos is the dot product
         let sin_out = (1.0 - Vec3::dot(&(-&v1), &n).powi(2)).sqrt();

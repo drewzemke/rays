@@ -25,21 +25,23 @@ impl ScatterRay for Translucent {
         incoming_ray: &Ray,
         intersection: &Intersection,
     ) -> Option<(Ray, &Color)> {
-        let refracted_dir = if intersection.is_into_surface {
-            Vec3::refract(
-                &incoming_ray.dir,
-                &intersection.normal,
-                1.0,
-                self.refractive_index,
-            )
+        let refractive_ratio = if intersection.is_into_surface {
+            1.0 / self.refractive_index
         } else {
-            Vec3::refract(
-                &incoming_ray.dir,
-                &(-&intersection.normal),
-                self.refractive_index,
-                1.0,
-            )
+            self.refractive_index
         };
+
+        let normal_sign = if intersection.is_into_surface {
+            1.0
+        } else {
+            -1.0
+        };
+
+        let refracted_dir = Vec3::refract(
+            &incoming_ray.dir,
+            &(normal_sign * &intersection.normal),
+            refractive_ratio,
+        );
 
         let new_ray = Ray::new(intersection.point.clone(), refracted_dir);
 
