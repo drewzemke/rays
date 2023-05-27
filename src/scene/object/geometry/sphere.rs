@@ -94,6 +94,7 @@ mod tests {
         let sphere = Sphere {
             radius: 1.0,
             center: Vec3::new(0.0, 0.0, 0.0),
+            orientation: NormalOrientation::Outward,
         };
         assert_eq!(
             sphere.intersect_ray(&ray),
@@ -112,6 +113,7 @@ mod tests {
         let sphere = Sphere {
             radius: 1.0,
             center: Vec3::new(0.0, 0.0, 0.0),
+            orientation: NormalOrientation::Outward,
         };
         assert_eq!(sphere.intersect_ray(&ray), None)
     }
@@ -122,6 +124,7 @@ mod tests {
         let sphere = Sphere {
             radius: 1.0,
             center: Vec3::new(2.0, 0.0, 0.0),
+            orientation: NormalOrientation::Outward,
         };
         assert_eq!(sphere.intersect_ray(&ray), None)
     }
