@@ -1,3 +1,5 @@
+use std::f32::consts::PI;
+
 use rand::{thread_rng, Rng};
 
 use crate::math::{ray::Ray, vec3::Vec3};
@@ -13,6 +15,7 @@ pub struct Camera {
     camera_forward: Vec3,
     camera_right: Vec3,
     camera_up: Vec3,
+    aperture_width: f32,
 }
 
 impl Camera {
@@ -21,6 +24,8 @@ impl Camera {
         target: Vec3,
         // horizontal fov
         field_of_view_degrees: f32,
+        focus_distance: f32,
+        aperture_width: f32,
         output_width: u32,
         output_height: u32,
     ) -> Camera {
@@ -32,42 +37,52 @@ impl Camera {
 
         // only need to set horizontal and vertical widths, keep the camera z-length as 1
         let aspect_ratio = (output_width as f32) / (output_height as f32);
-        let viewport_width = (field_of_view_degrees / 2.0).to_radians().tan();
+        let viewport_width = focus_distance * (field_of_view_degrees / 2.0).to_radians().tan();
         let viewport_height = viewport_width / aspect_ratio;
 
         let camera_right = viewport_width * &camera_right_unit;
         let camera_up = viewport_height * &camera_up_unit;
+        let camera_forward = focus_distance * &camera_forward_unit;
 
         Camera {
             output_width,
             output_height,
             position,
-            camera_forward: camera_forward_unit,
+            camera_forward,
             camera_right,
             camera_up,
+            aperture_width,
         }
-    }
-
-    fn dir_for_pixel(&self, pixel_x: u32, pixel_y: u32) -> Vec3 {
-        let mut rng = thread_rng();
-        let x_noise: f32 = rng.gen();
-        let y_noise: f32 = rng.gen();
-
-        // normalized screen coords (-1 to 1)
-        let u = 2.0 * (pixel_x as f32 + x_noise) / (self.output_width as f32) - 1.0;
-        // pixel_y traverses from top to bottom, so negate
-        let v = -(2.0 * (pixel_y as f32 + y_noise) / (self.output_height as f32) - 1.0);
-
-        // FIXME: idk this just looks gross
-        &(&self.camera_forward + &(u * &self.camera_right)) + &(v * &self.camera_up)
     }
 
     pub fn ray_for_pixel(&self, pixel_x: u32, pixel_y: u32) -> Ray {
-        let dir = self.dir_for_pixel(pixel_x, pixel_y).normalize();
-        Ray {
-            origin: self.position.clone(),
-            dir,
-        }
+        let mut rng = thread_rng();
+        // QUESTION: is it okay to use the same two random values for two different purposes?
+        let s: f32 = rng.gen();
+        let t: f32 = rng.gen();
+
+        let target = {
+            // QUESTION: also, do we still need to put noise here if we're using defocus blur?
+            // normalized screen coords (-1 to 1)
+            let u = 2.0 * (pixel_x as f32 + s) / (self.output_width as f32) - 1.0;
+            // pixel_y traverses from top to bottom, so negate
+            let v = -(2.0 * (pixel_y as f32 + t) / (self.output_height as f32) - 1.0);
+
+            // FIXME: idk this just looks gross
+            &self.position
+                + &(&(&self.camera_forward + &(u * &self.camera_right)) + &(v * &self.camera_up))
+        };
+
+        let origin_offset_x = self.aperture_width * s.sqrt() * (2.0 * PI * t).cos();
+        let origin_offset_y = self.aperture_width * s.sqrt() * (2.0 * PI * t).cos();
+
+        // obtain unit vectors for right and up, then linear combo with offsets, then add to origin
+        let origin_offset = &(origin_offset_x * &self.camera_right.normalize())
+            + &(origin_offset_y * &self.camera_up.normalize());
+
+        let origin = &self.position + &origin_offset;
+        let dir = (&target - &origin).normalize();
+        Ray { origin, dir }
     }
 
     // TODO: iterator for rays?

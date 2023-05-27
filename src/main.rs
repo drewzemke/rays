@@ -78,6 +78,8 @@ fn main() {
         Vec3::new(0.0, 0.7, 6.0),
         Vec3::new(0.0, 1.2, 0.0),
         60.0,
+        6.0,
+        0.1,
         output_width,
         output_height,
     );
