@@ -2,15 +2,28 @@ use crate::math::{ray::Ray, vec3::Vec3};
 
 use crate::scene::object::geometry::{IntersectRay, Intersection};
 
+use super::NormalOrientation;
+
 #[derive(Debug)]
 pub struct Sphere {
     radius: f32,
     center: Vec3,
+    orientation: NormalOrientation,
 }
 
 impl Sphere {
     pub fn new(radius: f32, center: Vec3) -> Sphere {
-        Sphere { radius, center }
+        Sphere {
+            radius,
+            center,
+            orientation: NormalOrientation::Outward,
+        }
+    }
+    pub fn flip_orientation(&mut self) {
+        self.orientation = match self.orientation {
+            NormalOrientation::Outward => NormalOrientation::Inward,
+            NormalOrientation::Inward => NormalOrientation::Outward,
+        };
     }
 }
 
@@ -34,7 +47,7 @@ impl IntersectRay for Sphere {
             // so the larger of the two solutions to the quadratic equation is the
             // only positive solution
             let t;
-            let into_surface;
+            let mut into_surface;
 
             // HACK: subtracting the 0.0001 dodges some floating point oddities
             //   it'd be better to have a more global / general solution
@@ -49,7 +62,16 @@ impl IntersectRay for Sphere {
             // otherwise, the smaller of the two solutions is the first one along the ray
 
             let point = ray.at(t);
-            let normal = (&point - c).normalize();
+            let normal_sign = match self.orientation {
+                NormalOrientation::Outward => 1.0,
+                NormalOrientation::Inward => {
+                    // HACK: oh god is this a hack
+                    // really need to find a better way to sort out how the orientation and `into_surface` interact
+                    into_surface = !into_surface;
+                    -1.0
+                }
+            };
+            let normal = normal_sign * &(&point - c).normalize();
             Some(Intersection {
                 point,
                 normal,

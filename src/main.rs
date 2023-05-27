@@ -24,6 +24,9 @@ fn main() {
     let sphere2 = Sphere::new(0.5, Vec3::new(-2.0, 0.5, 1.0));
     let sphere3 = Sphere::new(5.0, Vec3::new(5.0, 5.0, -5.0));
     let sphere4 = Sphere::new(0.75, Vec3::new(-0.75, 0.75, 2.0));
+    let mut sphere5 = Sphere::new(0.65, Vec3::new(-0.75, 0.75, 2.0));
+    sphere5.flip_orientation();
+
     // let plane = Plane::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 1.0, 0.0));
     let plane = Plane::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 1.0, 0.0));
 
@@ -60,9 +63,13 @@ fn main() {
         geometry: &sphere4,
         material: &glass,
     };
+    let object6 = Object {
+        geometry: &sphere5,
+        material: &glass,
+    };
 
     let scene = Scene::new(vec![
-        &object0, &object1, &object2, &object3, &object4, &object5,
+        &object0, &object1, &object2, &object3, &object4, &object5, &object6,
     ]);
 
     // camera setup

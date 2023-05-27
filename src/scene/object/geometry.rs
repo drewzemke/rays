@@ -23,3 +23,9 @@ pub struct Intersection {
 pub trait IntersectRay {
     fn intersect_ray(&self, ray: &Ray) -> Option<Intersection>;
 }
+
+#[derive(Debug)]
+pub enum NormalOrientation {
+    Outward,
+    Inward,
+}
