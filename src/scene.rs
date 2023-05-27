@@ -75,7 +75,7 @@ impl Scene {
     fn sky_color_for_direction(&self, dir: Vec3) -> Color {
         // TODO: make these params
         let nadir_color = Color::from_rgb_f32(1.0, 1.0, 1.0);
-        let zenith_color = Color::from_rgb_f32(0.5, 0.7, 1.0);
+        let zenith_color = Color::from_rgb_f32(1.0, 0.9, 0.8);
 
         let t = 0.5 * (dir.y + 1.0);
         lerp(t, &nadir_color, &zenith_color)

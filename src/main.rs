@@ -1,4 +1,5 @@
 use image::{ImageBuffer, Rgb};
+use rand::{rngs::StdRng, Rng, SeedableRng};
 use rays::{
     camera::Camera,
     math::{color::Color, vec3::Vec3},
@@ -6,7 +7,9 @@ use rays::{
     scene::{
         object::{
             geometry::{plane::Plane, sphere::Sphere},
-            material::metal::Metal,
+            material::{
+                lambertian::Lambertian, metal::Metal, translucent::Translucent, ScatterRay,
+            },
             Object,
         },
         Scene,
@@ -19,55 +22,77 @@ fn main() {
     let output_height = 500;
 
     // scene setup
+    let mut scene = Scene::new();
 
     let sphere0 = Sphere::new(1.0, Vec3::new(0.0, 1.0, 0.0));
-    let sphere1 = Sphere::new(1.0, Vec3::new(2.0, 1.0, 0.0));
-    let sphere2 = Sphere::new(1.0, Vec3::new(1.0, 1.0, f32::sqrt(3.0)));
-    let sphere3 = Sphere::new(
-        1.0,
-        Vec3::new(1.0, 2.0 * f32::sqrt(6.0) / 3.0 + 1.0, f32::sqrt(3.0) / 3.0),
-    );
-    let plane = Plane::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 1.0, 0.0));
-
-    let ball_mat = Metal::new(Color::from_rgb_u8(241, 231, 221), 0.7);
-    let floor_mat = Metal::new(Color::from_rgb_u8(8, 11, 14), 0.5);
-
-    let object0 = Object {
+    let sphere0_mat = Translucent::new(1.5);
+    scene.add(Object {
         geometry: Box::new(sphere0),
-        material: Box::new(ball_mat.clone()),
-    };
-    let object1 = Object {
-        geometry: Box::new(sphere1),
-        material: Box::new(ball_mat.clone()),
-    };
-    let object2 = Object {
-        geometry: Box::new(sphere2),
-        material: Box::new(ball_mat.clone()),
-    };
-    let object3 = Object {
-        geometry: Box::new(sphere3),
-        material: Box::new(ball_mat),
-    };
-    let object4 = Object {
-        geometry: Box::new(plane),
-        material: Box::new(floor_mat),
-    };
+        material: Box::new(sphere0_mat),
+    });
 
-    let mut scene = Scene::new();
-    scene.add(object0);
-    scene.add(object1);
-    scene.add(object2);
-    scene.add(object3);
-    scene.add(object4);
+    let sphere1 = Sphere::new(1.0, Vec3::new(-4.0, 1.0, 0.0));
+    let sphere1_mat = Lambertian::new(Color::from_rgb_f32(0.1, 0.2, 0.4));
+    scene.add(Object {
+        geometry: Box::new(sphere1),
+        material: Box::new(sphere1_mat),
+    });
+
+    let sphere2 = Sphere::new(1.0, Vec3::new(4.0, 1.0, 0.0));
+    let sphere2_mat = Metal::new(Color::from_rgb_f32(0.5, 0.6, 0.7), 0.0);
+    scene.add(Object {
+        geometry: Box::new(sphere2),
+        material: Box::new(sphere2_mat),
+    });
+
+    let floor = Plane::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 1.0, 0.0));
+    let floor_mat = Lambertian::new(Color::from_rgb_f32(0.5, 0.5, 0.5));
+    scene.add(Object {
+        geometry: Box::new(floor),
+        material: Box::new(floor_mat),
+    });
+
+    let mut rng: StdRng = SeedableRng::seed_from_u64(7);
+    let radius = 0.15;
+    for x in -15..11 {
+        for z in -11..11 {
+            // generate small spheres with randomly displaced locations
+            let center_offset_x = 0.8 * rng.gen::<f32>();
+            let center_offset_z = 0.8 * rng.gen::<f32>();
+            let center = Vec3::new(
+                x as f32 + center_offset_x,
+                radius,
+                z as f32 + center_offset_z,
+            );
+            let sphere = Box::new(Sphere::new(radius, center));
+
+            // generate material at random
+            let rand_color = Color::from_rgb_f32(
+                rng.gen_range(0.2..0.7),
+                rng.gen_range(0.3..0.8),
+                rng.gen_range(0.5..1.0),
+            );
+            let material: Box<dyn ScatterRay> = match rng.gen::<f32>() {
+                x if x < 0.8 => Box::new(Lambertian::new(rand_color)),
+                x if x < 0.95 => Box::new(Metal::new(rand_color, 0.5 * rng.gen::<f32>())),
+                _ => Box::new(Translucent::new(1.5)),
+            };
+
+            scene.add(Object {
+                geometry: sphere,
+                material,
+            })
+        }
+    }
 
     // camera setup
     // QUESTION: should this be part of scene?
     let camera = Camera::new(
-        Vec3::new(0.0, 0.7, 10.5),
-        Vec3::new(0.0, 3.0_f32.sqrt(), 0.0),
-        40.0,
-        9.0,
-        0.20,
+        Vec3::new(13.0, 1.5, 3.0),
+        Vec3::new(0.0, 0.5, 0.0),
+        30.0,
+        10.0,
+        0.07,
         output_width,
         output_height,
     );

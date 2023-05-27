@@ -84,8 +84,4 @@ impl Camera {
         let dir = (&target - &origin).normalize();
         Ray { origin, dir }
     }
-
-    // TODO: iterator for rays?
-    // this would make it easier to adapt ray generation strategies,
-    // like we decide to generate rays at completely random rather than per pixel
 }
