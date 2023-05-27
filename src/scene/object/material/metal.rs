@@ -5,6 +5,7 @@ use crate::{
 
 use super::ScatterRay;
 
+#[derive(Debug, Clone)]
 pub struct Metal {
     albedo: Color,
     fuzz: f32,

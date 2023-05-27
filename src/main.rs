@@ -6,7 +6,7 @@ use rays::{
     scene::{
         object::{
             geometry::{plane::Plane, sphere::Sphere},
-            material::{lambertian::Lambertian, metal::Metal, translucent::Translucent},
+            material::metal::Metal,
             Object,
         },
         Scene,
@@ -19,67 +19,55 @@ fn main() {
     let output_height = 500;
 
     // scene setup
-    let sphere0 = Sphere::new(1.0, Vec3::new(1.0, 1.0, 0.0));
-    let sphere1 = Sphere::new(0.5, Vec3::new(-1.0, 0.5, -2.0));
-    let sphere2 = Sphere::new(0.5, Vec3::new(-2.0, 0.5, 1.0));
-    let sphere3 = Sphere::new(5.0, Vec3::new(5.0, 5.0, -5.0));
-    let sphere4 = Sphere::new(0.75, Vec3::new(-0.75, 0.75, 2.0));
-    let mut sphere5 = Sphere::new(0.65, Vec3::new(-0.75, 0.75, 2.0));
-    sphere5.flip_orientation();
 
-    // let plane = Plane::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 1.0, 0.0));
+    let sphere0 = Sphere::new(1.0, Vec3::new(0.0, 1.0, 0.0));
+    let sphere1 = Sphere::new(1.0, Vec3::new(2.0, 1.0, 0.0));
+    let sphere2 = Sphere::new(1.0, Vec3::new(1.0, 1.0, f32::sqrt(3.0)));
+    let sphere3 = Sphere::new(
+        1.0,
+        Vec3::new(1.0, 2.0 * f32::sqrt(6.0) / 3.0 + 1.0, f32::sqrt(3.0) / 3.0),
+    );
     let plane = Plane::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 1.0, 0.0));
 
-    let lambert_gray = Lambertian::new(Color::from_rgb_f32(0.5, 0.5, 0.5));
-    let lambert_pink = Lambertian::new(Color::from_rgb_u8(255, 121, 198));
-    // let lambert_purple = Lambertian::new(Color::from_rgb_u8(189, 147, 249));
-    let lambert_green = Lambertian::new(Color::from_rgb_u8(80, 250, 123));
-    let metal_yellow = Metal::new(Color::from_rgb_u8(241, 250, 140), 0.4);
-    let metal_orange = Metal::new(Color::from_rgb_u8(255, 184, 108), 0.3);
-
-    let glass = Translucent::new(1.5);
+    let ball_mat = Metal::new(Color::from_rgb_u8(241, 231, 221), 0.7);
+    let floor_mat = Metal::new(Color::from_rgb_u8(8, 11, 14), 0.5);
 
     let object0 = Object {
-        geometry: &sphere0,
-        material: &lambert_pink,
+        geometry: Box::new(sphere0),
+        material: Box::new(ball_mat.clone()),
     };
     let object1 = Object {
-        geometry: &sphere1,
-        material: &lambert_green,
+        geometry: Box::new(sphere1),
+        material: Box::new(ball_mat.clone()),
     };
     let object2 = Object {
-        geometry: &sphere2,
-        material: &metal_yellow,
+        geometry: Box::new(sphere2),
+        material: Box::new(ball_mat.clone()),
     };
     let object3 = Object {
-        geometry: &sphere3,
-        material: &metal_orange,
+        geometry: Box::new(sphere3),
+        material: Box::new(ball_mat),
     };
     let object4 = Object {
-        geometry: &plane,
-        material: &lambert_gray,
-    };
-    let object5 = Object {
-        geometry: &sphere4,
-        material: &glass,
-    };
-    let object6 = Object {
-        geometry: &sphere5,
-        material: &glass,
+        geometry: Box::new(plane),
+        material: Box::new(floor_mat),
     };
 
-    let scene = Scene::new(vec![
-        &object0, &object1, &object2, &object3, &object4, &object5, &object6,
-    ]);
+    let mut scene = Scene::new();
+    scene.add(object0);
+    scene.add(object1);
+    scene.add(object2);
+    scene.add(object3);
+    scene.add(object4);
 
     // camera setup
     // QUESTION: should this be part of scene?
     let camera = Camera::new(
-        Vec3::new(0.0, 0.7, 6.0),
-        Vec3::new(0.0, 1.2, 0.0),
-        60.0,
-        6.0,
-        0.1,
+        Vec3::new(0.0, 0.7, 10.5),
+        Vec3::new(0.0, 3.0_f32.sqrt(), 0.0),
+        40.0,
+        9.0,
+        0.20,
         output_width,
         output_height,
     );
@@ -138,3 +126,60 @@ fn main() {
 // };
 
 // let scene = Scene::new(vec![&object0, &object1, &object2, &object3, &object4]);
+
+//
+//
+//
+// initial test scene
+// let sphere0 = Sphere::new(1.0, Vec3::new(1.0, 1.0, 0.0));
+// let sphere1 = Sphere::new(0.5, Vec3::new(-1.0, 0.5, -2.0));
+// let sphere2 = Sphere::new(0.5, Vec3::new(-2.0, 0.5, 1.0));
+// let sphere3 = Sphere::new(5.0, Vec3::new(5.0, 5.0, -5.0));
+// let sphere4 = Sphere::new(0.75, Vec3::new(-0.75, 0.75, 2.0));
+// let mut sphere5 = Sphere::new(0.65, Vec3::new(-0.75, 0.75, 2.0));
+// sphere5.flip_orientation();
+
+// // let plane = Plane::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 1.0, 0.0));
+// let plane = Plane::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 1.0, 0.0));
+
+// let lambert_gray = Lambertian::new(Color::from_rgb_f32(0.5, 0.5, 0.5));
+// let lambert_pink = Lambertian::new(Color::from_rgb_u8(255, 121, 198));
+// // let lambert_purple = Lambertian::new(Color::from_rgb_u8(189, 147, 249));
+// let lambert_green = Lambertian::new(Color::from_rgb_u8(80, 250, 123));
+// let metal_yellow = Metal::new(Color::from_rgb_u8(241, 250, 140), 0.4);
+// let metal_orange = Metal::new(Color::from_rgb_u8(255, 184, 108), 0.3);
+
+// let glass = Translucent::new(1.5);
+
+// let object0 = Object {
+//     geometry: &sphere0,
+//     material: &lambert_pink,
+// };
+// let object1 = Object {
+//     geometry: &sphere1,
+//     material: &lambert_green,
+// };
+// let object2 = Object {
+//     geometry: &sphere2,
+//     material: &metal_yellow,
+// };
+// let object3 = Object {
+//     geometry: &sphere3,
+//     material: &metal_orange,
+// };
+// let object4 = Object {
+//     geometry: &plane,
+//     material: &lambert_gray,
+// };
+// let object5 = Object {
+//     geometry: &sphere4,
+//     material: &glass,
+// };
+// let object6 = Object {
+//     geometry: &sphere5,
+//     material: &glass,
+// };
+
+// let scene = Scene::new(vec![
+//     &object0, &object1, &object2, &object3, &object4, &object5, &object6,
+// ]);

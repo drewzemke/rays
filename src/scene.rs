@@ -4,17 +4,21 @@ use self::object::{geometry::Intersection, Object};
 
 pub mod object;
 
-pub struct Scene<'a> {
-    objects: Vec<&'a Object<'a>>,
+pub struct Scene {
+    objects: Vec<Object>,
 }
 
 // the shortest distance a ray can travel before intersections are allowed.
 // helps avoid floating points obnoxiousness
 const RAY_MIN_T: f32 = 0.0001;
 
-impl<'a> Scene<'a> {
-    pub fn new(objects: Vec<&'a Object>) -> Scene<'a> {
-        Scene { objects }
+impl Scene {
+    pub fn new() -> Scene {
+        Scene { objects: vec![] }
+    }
+
+    pub fn add(&mut self, object: Object) {
+        self.objects.push(object)
     }
 
     // TODO: some of this logic should probably reside in render
@@ -75,5 +79,11 @@ impl<'a> Scene<'a> {
 
         let t = 0.5 * (dir.y + 1.0);
         lerp(t, &nadir_color, &zenith_color)
+    }
+}
+
+impl Default for Scene {
+    fn default() -> Self {
+        Self::new()
     }
 }
