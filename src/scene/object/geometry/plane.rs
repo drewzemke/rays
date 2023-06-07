@@ -1,7 +1,10 @@
+use serde::{Deserialize, Serialize};
+
 use crate::math::ray::Ray;
 use crate::math::vec3::Vec3;
 use crate::scene::object::geometry::{IntersectRay, Intersection};
 
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Plane {
     basepoint: Vec3,
     normal: Vec3,
@@ -13,6 +16,7 @@ impl Plane {
     }
 }
 
+#[typetag::serde]
 impl IntersectRay for Plane {
     fn intersect_ray(&self, ray: &Ray) -> Option<Intersection> {
         let normal_vs_displ = Vec3::dot(&self.normal, &(&ray.origin - &self.basepoint));

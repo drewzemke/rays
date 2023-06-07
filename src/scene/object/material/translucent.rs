@@ -1,11 +1,14 @@
+use rand::Rng;
+use serde::{Deserialize, Serialize};
+
 use crate::{
     math::{color::Color, ray::Ray, vec3::Vec3},
     scene::object::geometry::Intersection,
 };
-use rand::Rng;
 
 use super::ScatterRay;
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Translucent {
     albedo: Color,
     refractive_index: f32,
@@ -27,6 +30,7 @@ impl Translucent {
     }
 }
 
+#[typetag::serde]
 impl ScatterRay for Translucent {
     fn scatter_ray(
         &self,

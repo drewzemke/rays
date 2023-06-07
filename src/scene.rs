@@ -1,9 +1,12 @@
+use serde::{Deserialize, Serialize};
+
 use crate::math::{color::Color, ray::Ray, shaping::lerp, vec3::Vec3};
 
 use self::object::{geometry::Intersection, Object};
 
 pub mod object;
 
+#[derive(Serialize, Deserialize)]
 pub struct Scene {
     objects: Vec<Object>,
 }

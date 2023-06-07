@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 use crate::{
     math::{color::Color, ray::Ray, vec3::Vec3},
     scene::object::geometry::Intersection,
@@ -5,7 +7,7 @@ use crate::{
 
 use super::ScatterRay;
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Metal {
     albedo: Color,
     fuzz: f32,
@@ -17,6 +19,7 @@ impl Metal {
     }
 }
 
+#[typetag::serde]
 impl ScatterRay for Metal {
     fn scatter_ray(
         &self,

@@ -1,10 +1,12 @@
+use serde::{Deserialize, Serialize};
+
 use crate::math::{ray::Ray, vec3::Vec3};
 
 use crate::scene::object::geometry::{IntersectRay, Intersection};
 
 use super::NormalOrientation;
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct Sphere {
     radius: f32,
     center: Vec3,
@@ -27,6 +29,7 @@ impl Sphere {
     }
 }
 
+#[typetag::serde]
 impl IntersectRay for Sphere {
     fn intersect_ray(&self, ray: &Ray) -> Option<Intersection> {
         let a = &ray.origin;

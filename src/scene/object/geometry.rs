@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 use crate::math::{ray::Ray, vec3::Vec3};
 
 pub mod plane;
@@ -20,11 +22,12 @@ pub struct Intersection {
     pub is_into_surface: bool,
 }
 
+#[typetag::serde]
 pub trait IntersectRay {
     fn intersect_ray(&self, ray: &Ray) -> Option<Intersection>;
 }
 
-#[derive(Debug)]
+#[derive(Debug, Serialize, Deserialize)]
 pub enum NormalOrientation {
     Outward,
     Inward,

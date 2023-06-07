@@ -1,3 +1,5 @@
+use serde::{Deserialize, Serialize};
+
 use crate::{
     math::{color::Color, ray::Ray, vec3::Vec3},
     scene::object::geometry::Intersection,
@@ -5,6 +7,7 @@ use crate::{
 
 use super::ScatterRay;
 
+#[derive(Serialize, Deserialize)]
 pub struct Lambertian {
     albedo: Color,
 }
@@ -15,6 +18,7 @@ impl Lambertian {
     }
 }
 
+#[typetag::serde]
 impl ScatterRay for Lambertian {
     fn scatter_ray(
         &self,

@@ -1,13 +1,14 @@
 use std::ops::{Add, Mul};
 
 use image::{ImageBuffer, Rgb};
+use serde::{Deserialize, Serialize};
 
 use crate::math::shaping::clamp;
 use crate::math::vec3::Vec3;
 
 // for now, color is just a wrapper around Vec3, with the implicit assertion that values are between 0 and 1,
 // and that we're using rgb colors
-#[derive(Debug, PartialEq, Clone)]
+#[derive(Debug, PartialEq, Clone, Serialize, Deserialize)]
 pub struct Color(Vec3);
 
 impl Color {
