@@ -40,13 +40,13 @@ fn main() {
     scene_builder.add_camera(camera);
     let scene = scene_builder.build();
 
-    // write_to_json(&scene, "test.json")
+    // write_to_json(&scene, "first_test_scene.json");
 
-    write_to_json(&scene, "first_test_scene.json");
+    write_to_yaml(&scene, "test_scene.yaml");
 
     // render
-    let samples_per_pixel = 20;
-    let bounce_depth = 10;
+    let samples_per_pixel = 10;
+    let bounce_depth = 5;
 
     let color_mat = render(
         scene,
@@ -63,15 +63,15 @@ fn main() {
 
 const SCENE_PATH: &str = "./data";
 
-fn write_to_json(scene: &Scene, name: &str) {
+fn write_to_yaml(scene: &Scene, name: &str) {
     fs::write(
         format!("{}/{}", SCENE_PATH, name),
-        serde_json::to_vec(scene).unwrap(),
+        serde_yaml::to_string(scene).unwrap(),
     )
     .unwrap();
 }
 
-// temporary until I'm happy with serde usage
+// temporary until I'm done churning on scene storage
 fn make_initial_test_scene() -> SceneBuilder {
     let mut scene = Scene::builder();
 
@@ -135,7 +135,6 @@ fn make_initial_test_scene() -> SceneBuilder {
     scene
 }
 
-// temporary until I'm happy with serde usage
 fn _make_tutorial_end_scene() -> SceneBuilder {
     let mut scene = Scene::builder();
 
@@ -203,7 +202,8 @@ fn _make_tutorial_end_scene() -> SceneBuilder {
     scene
 }
 
-// TODO: find a better way to manage this!
+// fn _make_steel_balls_scene) -> SceneBuilder {
+
 // steel balls scene
 // let sphere0 = Sphere::new(1.0, Vec3::new(0.0, 1.0, 0.0));
 // let sphere1 = Sphere::new(1.0, Vec3::new(2.0, 1.0, 0.0));
