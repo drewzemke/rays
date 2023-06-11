@@ -1,13 +1,14 @@
 use std::f32::consts::PI;
 
 use rand::{thread_rng, Rng};
+use serde::{Deserialize, Serialize};
 
 use crate::math::{ray::Ray, vec3::Vec3};
 
 // camera manages the transformation between screen space and world space
 // it takes in camera location and orientation and image output dimensions,
 // and generates rays that interact with the scene
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Camera {
     output_width: u32,
     output_height: u32,

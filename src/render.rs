@@ -1,12 +1,10 @@
 use crate::{
-    camera::Camera,
     math::color::{Color, ColorMatrix},
     scene::Scene,
 };
 
 pub fn render(
     scene: Scene,
-    camera: Camera,
     output_width: u32,
     output_height: u32,
     samples_per_pixel: u32,
@@ -20,7 +18,7 @@ pub fn render(
         for pixel_y in 0..output_height {
             let mut accumulated_color = Color::from_rgb_u8(0, 0, 0);
             for _ in 0..samples_per_pixel {
-                let ray = camera.ray_for_pixel(pixel_x, pixel_y);
+                let ray = scene.camera().ray_for_pixel(pixel_x, pixel_y);
                 accumulated_color = &accumulated_color + &scene.color_for_ray(ray, bounce_depth);
             }
 

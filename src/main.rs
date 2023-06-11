@@ -14,7 +14,7 @@ use rays::{
             },
             Object,
         },
-        Scene,
+        Scene, SceneBuilder,
     },
 };
 
@@ -24,7 +24,7 @@ fn main() {
     let output_height = 500;
 
     // scene setup
-    let scene = make_initial_test_scene();
+    let mut scene_builder = make_initial_test_scene();
 
     // camera setup
     // QUESTION: should this be part of scene?
@@ -37,8 +37,12 @@ fn main() {
         output_width,
         output_height,
     );
+    scene_builder.add_camera(camera);
+    let scene = scene_builder.build();
 
     // write_to_json(&scene, "test.json")
+
+    write_to_json(&scene, "first_test_scene.json");
 
     // render
     let samples_per_pixel = 20;
@@ -46,7 +50,6 @@ fn main() {
 
     let color_mat = render(
         scene,
-        camera,
         output_width,
         output_height,
         samples_per_pixel,
@@ -69,8 +72,8 @@ fn write_to_json(scene: &Scene, name: &str) {
 }
 
 // temporary until I'm happy with serde usage
-fn make_initial_test_scene() -> Scene {
-    let mut scene = Scene::new();
+fn make_initial_test_scene() -> SceneBuilder {
+    let mut scene = Scene::builder();
 
     let sphere0 = Sphere::new(1.0, Vec3::new(1.0, 1.0, 0.0));
     let sphere1 = Sphere::new(0.5, Vec3::new(-1.0, 0.5, -2.0));
@@ -121,45 +124,45 @@ fn make_initial_test_scene() -> Scene {
         material: Box::new(glass),
     };
 
-    scene.add(object0);
-    scene.add(object1);
-    scene.add(object2);
-    scene.add(object3);
-    scene.add(object4);
-    scene.add(object5);
-    scene.add(object6);
+    scene.add_object(object0);
+    scene.add_object(object1);
+    scene.add_object(object2);
+    scene.add_object(object3);
+    scene.add_object(object4);
+    scene.add_object(object5);
+    scene.add_object(object6);
 
     scene
 }
 
 // temporary until I'm happy with serde usage
-fn make_tutorial_end_scene() -> Scene {
-    let mut scene = Scene::new();
+fn _make_tutorial_end_scene() -> SceneBuilder {
+    let mut scene = Scene::builder();
 
     let sphere0 = Sphere::new(1.0, Vec3::new(0.0, 1.0, 0.0));
     let sphere0_mat = Translucent::new(1.5);
-    scene.add(Object {
+    scene.add_object(Object {
         geometry: Box::new(sphere0),
         material: Box::new(sphere0_mat),
     });
 
     let sphere1 = Sphere::new(1.0, Vec3::new(-4.0, 1.0, 0.0));
     let sphere1_mat = Lambertian::new(Color::from_rgb_f32(0.1, 0.2, 0.4));
-    scene.add(Object {
+    scene.add_object(Object {
         geometry: Box::new(sphere1),
         material: Box::new(sphere1_mat),
     });
 
     let sphere2 = Sphere::new(1.0, Vec3::new(4.0, 1.0, 0.0));
     let sphere2_mat = Metal::new(Color::from_rgb_f32(0.5, 0.6, 0.7), 0.0);
-    scene.add(Object {
+    scene.add_object(Object {
         geometry: Box::new(sphere2),
         material: Box::new(sphere2_mat),
     });
 
     let floor = Plane::new(Vec3::new(0.0, 0.0, 0.0), Vec3::new(0.0, 1.0, 0.0));
     let floor_mat = Lambertian::new(Color::from_rgb_f32(0.5, 0.5, 0.5));
-    scene.add(Object {
+    scene.add_object(Object {
         geometry: Box::new(floor),
         material: Box::new(floor_mat),
     });
@@ -190,10 +193,10 @@ fn make_tutorial_end_scene() -> Scene {
                 _ => Box::new(Translucent::new(1.5)),
             };
 
-            scene.add(Object {
+            scene.add_object(Object {
                 geometry: sphere,
                 material,
-            })
+            });
         }
     }
 

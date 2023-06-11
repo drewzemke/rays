@@ -1,6 +1,9 @@
 use serde::{Deserialize, Serialize};
 
-use crate::math::{color::Color, ray::Ray, shaping::lerp, vec3::Vec3};
+use crate::{
+    camera::Camera,
+    math::{color::Color, ray::Ray, shaping::lerp, vec3::Vec3},
+};
 
 use self::object::{geometry::Intersection, Object};
 
@@ -8,6 +11,7 @@ pub mod object;
 
 #[derive(Serialize, Deserialize)]
 pub struct Scene {
+    camera: Camera,
     objects: Vec<Object>,
 }
 
@@ -16,14 +20,6 @@ pub struct Scene {
 const RAY_MIN_T: f32 = 0.0001;
 
 impl Scene {
-    pub fn new() -> Scene {
-        Scene { objects: vec![] }
-    }
-
-    pub fn add(&mut self, object: Object) {
-        self.objects.push(object)
-    }
-
     // TODO: some of this logic should probably reside in render
     // maybe scene should only handle single ray intersections, not the recursion? idk
     pub fn color_for_ray(&self, ray: Ray, bounce_depth: u32) -> Color {
@@ -83,10 +79,41 @@ impl Scene {
         let t = 0.5 * (dir.y + 1.0);
         lerp(t, &nadir_color, &zenith_color)
     }
+
+    pub fn camera(&self) -> &Camera {
+        &self.camera
+    }
 }
 
-impl Default for Scene {
-    fn default() -> Self {
-        Self::new()
+pub struct SceneBuilder {
+    camera: Option<Camera>,
+    objects: Vec<Object>,
+}
+
+impl SceneBuilder {
+    pub fn add_object(&mut self, object: Object) -> &mut Self {
+        self.objects.push(object);
+        self
+    }
+
+    pub fn add_camera(&mut self, camera: Camera) -> &mut Self {
+        self.camera = Some(camera);
+        self
+    }
+
+    pub fn build(mut self) -> Scene {
+        Scene {
+            camera: self.camera.take().expect("scene is missing camera"),
+            objects: self.objects,
+        }
+    }
+}
+
+impl Scene {
+    pub fn builder() -> SceneBuilder {
+        SceneBuilder {
+            camera: None,
+            objects: vec![],
+        }
     }
 }
