@@ -75,7 +75,7 @@ impl Camera {
         };
 
         let origin_offset_x = self.aperture_width * s.sqrt() * (2.0 * PI * t).cos();
-        let origin_offset_y = self.aperture_width * s.sqrt() * (2.0 * PI * t).cos();
+        let origin_offset_y = self.aperture_width * s.sqrt() * (2.0 * PI * t).sin();
 
         // obtain unit vectors for right and up, then linear combo with offsets, then add to origin
         let origin_offset = &(origin_offset_x * &self.camera_right.normalize())
