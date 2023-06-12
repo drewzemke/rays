@@ -3,12 +3,16 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     camera::Camera,
-    math::{color::Color, ray::Ray, shaping::lerp, vec3::Vec3},
+    math::{color::Color, ray::Ray},
 };
 
-use self::object::{geometry::Intersection, Object};
+use self::{
+    object::{geometry::Intersection, Object},
+    sky::Sky,
+};
 
 pub mod object;
+pub mod sky;
 
 #[derive(Serialize, Deserialize, Builder)]
 pub struct Scene {
@@ -16,6 +20,8 @@ pub struct Scene {
 
     #[builder(each = "add_object")]
     objects: Vec<Object>,
+
+    sky: Sky,
 }
 
 // the shortest distance a ray can travel before intersections are allowed.
@@ -70,17 +76,8 @@ impl Scene {
                     }
                 }
             }
-            None => self.sky_color_for_direction(ray.dir),
+            None => self.sky.sky_color_for_direction(ray.dir),
         }
-    }
-
-    fn sky_color_for_direction(&self, dir: Vec3) -> Color {
-        // TODO: make these params
-        let nadir_color = Color::from_rgb_f32(1.0, 1.0, 1.0);
-        let zenith_color = Color::from_rgb_f32(1.0, 0.9, 0.8);
-
-        let t = 0.5 * (dir.y + 1.0);
-        lerp(t, &nadir_color, &zenith_color)
     }
 
     pub fn camera(&self) -> &Camera {

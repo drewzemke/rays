@@ -15,6 +15,7 @@ use rays::{
             },
             Object,
         },
+        sky::Sky,
         Scene, SceneBuilder,
     },
 };
@@ -23,7 +24,7 @@ fn main() {
     // scene setup
     let scene = make_initial_test_scene().build().unwrap();
 
-    // write_to_yaml(&scene, "test_scene.yaml");
+    // _write_to_yaml(&scene, "test_scene.yaml");
 
     // render
     let output_width = 800;
@@ -130,6 +131,11 @@ fn make_initial_test_scene() -> SceneBuilder {
     );
     scene.camera(camera);
 
+    let nadir_color = Color::from_rgb_f32(1.0, 1.0, 1.0);
+    let zenith_color = Color::from_rgb_f32(1.0, 0.9, 0.8);
+    let sky = Sky::new(nadir_color, zenith_color);
+    scene.sky(sky);
+
     scene
 }
 
@@ -211,6 +217,11 @@ fn _make_tutorial_end_scene() -> SceneBuilder {
         output_height,
     );
     scene.camera(camera);
+
+    let nadir_color = Color::from_rgb_f32(1.0, 1.0, 1.0);
+    let zenith_color = Color::from_rgb_f32(1.0, 0.9, 0.8);
+    let sky = Sky::new(nadir_color, zenith_color);
+    scene.sky(sky);
 
     scene
 }
