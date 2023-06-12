@@ -44,6 +44,14 @@ impl Vec3 {
         (1.0 / self.length()) * self
     }
 
+    pub fn lin_comb(items: Vec<(f32, &Vec3)>) -> Vec3 {
+        items
+            .iter()
+            .fold(Vec3::new(0.0, 0.0, 0.0), |sum, (coeff, vec)| {
+                &sum + &(*coeff * *vec)
+            })
+    }
+
     // This is based on some not-trivial-but-also-not-the-worst math.
     // You can prove that vectors generated according to this formula
     // are uniformly distributed on the unit sphere.
@@ -251,5 +259,19 @@ mod tests {
 
         // snell's law
         assert!(n_in * sin_in - n_out * sin_out < 1e-6)
+    }
+
+    #[test]
+    fn empty_lin_comb_is_zero() {
+        assert_eq!(Vec3::lin_comb(vec![]), Vec3::new(0.0, 0.0, 0.0));
+    }
+
+    #[test]
+    fn compute_linear_combination() {
+        let u = Vec3::new(1.0, 2.0, 3.0);
+        let v = Vec3::new(0.0, 4.0, 8.0);
+        let w = Vec3::new(2.0, -4.0, 0.0);
+        let result = Vec3::lin_comb(vec![(1.0, &u), (-2.0, &v), (3.0, &w)]);
+        assert_eq!(result, Vec3::new(7.0, -18.0, -13.0));
     }
 }
