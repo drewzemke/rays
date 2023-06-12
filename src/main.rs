@@ -19,36 +19,18 @@ use rays::{
 };
 
 fn main() {
-    // window setup
-    let output_width = 800;
-    let output_height = 500;
-
     // scene setup
-    let mut scene_builder = make_initial_test_scene();
+    let scene = make_initial_test_scene().build();
 
-    // camera setup
-    // QUESTION: should this be part of scene?
-    let camera = Camera::new(
-        Vec3::new(13.0, 1.5, 3.0),
-        Vec3::new(0.0, 0.5, 0.0),
-        30.0,
-        10.0,
-        0.07,
-        output_width,
-        output_height,
-    );
-    scene_builder.add_camera(camera);
-    let scene = scene_builder.build();
-
-    // write_to_json(&scene, "first_test_scene.json");
-
-    write_to_yaml(&scene, "test_scene.yaml");
+    // write_to_yaml(&scene, "test_scene.yaml");
 
     // render
-    let samples_per_pixel = 10;
-    let bounce_depth = 5;
+    let output_width = 800;
+    let output_height = 500;
+    let samples_per_pixel = 15;
+    let bounce_depth = 10;
 
-    let color_mat = render(
+    let color_matrix = render(
         scene,
         output_width,
         output_height,
@@ -57,7 +39,7 @@ fn main() {
     );
 
     // write to output
-    let img_buffer: ImageBuffer<Rgb<u8>, Vec<u8>> = color_mat.into();
+    let img_buffer: ImageBuffer<Rgb<u8>, Vec<u8>> = color_matrix.into();
     img_buffer.save("target/debug/img_out/render.png").unwrap();
 }
 
@@ -132,6 +114,21 @@ fn make_initial_test_scene() -> SceneBuilder {
     scene.add_object(object5);
     scene.add_object(object6);
 
+    // window setup
+    let output_width = 800;
+    let output_height = 500;
+
+    let camera = Camera::new(
+        Vec3::new(0.0, 0.7, 6.0),
+        Vec3::new(0.0, 1.2, 0.0),
+        60.0,
+        6.0,
+        0.1,
+        output_width,
+        output_height,
+    );
+    scene.add_camera(camera);
+
     scene
 }
 
@@ -198,6 +195,21 @@ fn _make_tutorial_end_scene() -> SceneBuilder {
             });
         }
     }
+
+    // window setup
+    let output_width = 800;
+    let output_height = 500;
+
+    let camera = Camera::new(
+        Vec3::new(13.0, 1.5, 3.0),
+        Vec3::new(0.0, 0.5, 0.0),
+        30.0,
+        10.0,
+        0.07,
+        output_width,
+        output_height,
+    );
+    scene.add_camera(camera);
 
     scene
 }

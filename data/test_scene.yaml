@@ -2,22 +2,22 @@ camera:
   output_width: 800
   output_height: 500
   position:
-    x: 13.0
-    y: 1.5
-    z: 3.0
+    x: 0.0
+    y: 0.7
+    z: 6.0
   camera_forward:
-    x: -9.716656
-    y: -0.7474351
-    z: -2.2423053
+    x: 0.0
+    y: 0.49827296
+    z: -5.9792747
   camera_right:
-    x: 0.60250926
-    y: 0.0
-    z: -2.6108737
+    x: 3.4641013
+    y: -0.0
+    z: 0.0
   camera_up:
-    x: -0.12196616
-    y: 1.6699982
-    z: -0.028146038
-  aperture_width: 0.07
+    x: 0.0
+    y: 2.1575847
+    z: 0.17979874
+  aperture_width: 0.1
 objects:
 - geometry:
     Sphere:
