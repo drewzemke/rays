@@ -1,3 +1,4 @@
+use derive_builder::Builder;
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -9,9 +10,11 @@ use self::object::{geometry::Intersection, Object};
 
 pub mod object;
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Builder)]
 pub struct Scene {
     camera: Camera,
+
+    #[builder(each = "add_object")]
     objects: Vec<Object>,
 }
 
@@ -82,38 +85,5 @@ impl Scene {
 
     pub fn camera(&self) -> &Camera {
         &self.camera
-    }
-}
-
-pub struct SceneBuilder {
-    camera: Option<Camera>,
-    objects: Vec<Object>,
-}
-
-impl SceneBuilder {
-    pub fn add_object(&mut self, object: Object) -> &mut Self {
-        self.objects.push(object);
-        self
-    }
-
-    pub fn add_camera(&mut self, camera: Camera) -> &mut Self {
-        self.camera = Some(camera);
-        self
-    }
-
-    pub fn build(mut self) -> Scene {
-        Scene {
-            camera: self.camera.take().expect("scene is missing camera"),
-            objects: self.objects,
-        }
-    }
-}
-
-impl Scene {
-    pub fn builder() -> SceneBuilder {
-        SceneBuilder {
-            camera: None,
-            objects: vec![],
-        }
     }
 }

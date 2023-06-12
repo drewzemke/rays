@@ -21,7 +21,7 @@ use rays::{
 
 fn main() {
     // scene setup
-    let scene = make_initial_test_scene().build();
+    let scene = make_initial_test_scene().build().unwrap();
 
     // write_to_yaml(&scene, "test_scene.yaml");
 
@@ -128,7 +128,7 @@ fn make_initial_test_scene() -> SceneBuilder {
         output_width,
         output_height,
     );
-    scene.add_camera(camera);
+    scene.camera(camera);
 
     scene
 }
@@ -210,7 +210,7 @@ fn _make_tutorial_end_scene() -> SceneBuilder {
         output_width,
         output_height,
     );
-    scene.add_camera(camera);
+    scene.camera(camera);
 
     scene
 }

@@ -11,3 +11,8 @@ rand = "0.8.5"
 serde = { version = "1.0", features = [ "derive" ] }
 serde_yaml = "0.9.21"
 typetag = "0.2.8"
+
+# TODO: use a git repo reference instead
+# see https://doc.rust-lang.org/cargo/reference/specifying-dependencies.html
+[dependencies.derive_builder]
+path = "../../../tutorials/rust/rust-macro-workshop/builder"
