@@ -2,6 +2,7 @@ use std::fs;
 
 use image::{ImageBuffer, Rgb};
 use rand::{rngs::StdRng, Rng, SeedableRng};
+
 use rays::{
     camera::Camera,
     math::{color::Color, vec3::Vec3},
@@ -43,11 +44,11 @@ fn main() {
     img_buffer.save("target/debug/img_out/render.png").unwrap();
 }
 
-const SCENE_PATH: &str = "./data";
+const _SCENE_PATH: &str = "./data";
 
-fn write_to_yaml(scene: &Scene, name: &str) {
+fn _write_to_yaml(scene: &Scene, name: &str) {
     fs::write(
-        format!("{}/{}", SCENE_PATH, name),
+        format!("{}/{}", _SCENE_PATH, name),
         serde_yaml::to_string(scene).unwrap(),
     )
     .unwrap();

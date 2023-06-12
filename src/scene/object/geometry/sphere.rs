@@ -32,7 +32,7 @@ impl Sphere {
 impl IntersectRay for Sphere {
     fn intersect_ray(&self, ray: &Ray) -> Option<Intersection> {
         // the displacement vector from the sphere center to the origin of the ray
-        let disp = (&ray.origin) - (&self.center);
+        let disp = &ray.origin - &self.center;
 
         // quadratic equation coefficients
         let q_a = Vec3::dot(&ray.dir, &ray.dir);
