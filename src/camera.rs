@@ -69,19 +69,26 @@ impl Camera {
             // pixel_y traverses from top to bottom, so negate
             let v = -(2.0 * (pixel_y as f32 + t) / (self.output_height as f32) - 1.0);
 
-            // FIXME: idk this just looks gross
-            &self.position
-                + &(&(&self.camera_forward + &(u * &self.camera_right)) + &(v * &self.camera_up))
+            Vec3::lin_comb(vec![
+                (1.0, &self.position),
+                (1.0, &self.camera_forward),
+                (u, &self.camera_right),
+                (v, &self.camera_up),
+            ])
         };
 
+        // (origin_offset_x, origin_offset_y) is a random 2D vector in the unit disk.
+        // we haven't made a Vec2 struct yet, or this would be part of that, but for now we only
+        // use this functionality here
         let origin_offset_x = self.aperture_width * s.sqrt() * (2.0 * PI * t).cos();
         let origin_offset_y = self.aperture_width * s.sqrt() * (2.0 * PI * t).sin();
 
-        // obtain unit vectors for right and up, then linear combo with offsets, then add to origin
-        let origin_offset = &(origin_offset_x * &self.camera_right.normalize())
-            + &(origin_offset_y * &self.camera_up.normalize());
-
-        let origin = &self.position + &origin_offset;
+        // obtain unit vectors for right and up, then linear combo with offsets, then add to camera pos
+        let origin = Vec3::lin_comb(vec![
+            (1.0, &self.position),
+            (origin_offset_x, &self.camera_right.normalize()),
+            (origin_offset_y, &self.camera_up.normalize()),
+        ]);
         let dir = (&target - &origin).normalize();
         Ray { origin, dir }
     }
