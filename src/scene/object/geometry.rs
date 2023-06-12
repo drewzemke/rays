@@ -20,6 +20,9 @@ pub struct Intersection {
     // at the intersection point
     // (it's easier to compute and store this during intersection computation, rather than later)
     pub is_into_surface: bool,
+    //
+    // TODO: add `object` -- as a reference?
+    //   then spend 3 hours figuring out how lifetimes work, probably
 }
 
 #[typetag::serde]
