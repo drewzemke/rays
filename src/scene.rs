@@ -36,46 +36,36 @@ impl Scene {
             return Color::from_rgb_u8(0, 0, 0);
         }
 
-        // HACK: do we need to store both of these?
-        let mut closest_intersection = None;
-        let mut closest_object = None;
+        let mut closest: Option<(Intersection, &Object)> = None;
 
         for object in self.objects.iter() {
-            let current_intersection = object.geometry.intersect_ray(&ray);
-
-            if let Some(Intersection { t: current_t, .. }) = current_intersection {
+            if let Some(intersection) = object.geometry.intersect_ray(&ray) {
                 // reject this intersection if its t value is too small or negative
-                if current_t < RAY_MIN_T {
+                if intersection.t < RAY_MIN_T {
                     continue;
                 }
 
-                match closest_intersection {
-                    // Don't update the closest intersection only if a larger t was found
-                    Some(Intersection { t: closest_t, .. }) if current_t > closest_t => {}
+                match closest {
+                    // Update the closest intersection if a larger t was found
+                    Some((Intersection { t: closest_t, .. }, _)) if intersection.t > closest_t => {}
                     _ => {
-                        closest_intersection = current_intersection;
-                        closest_object = Some(object);
+                        closest = Some((intersection, object));
                     }
-                }
+                };
             }
         }
 
-        match closest_intersection {
-            Some(ref intersection) => {
-                match closest_object
-                    .unwrap()
-                    .material
-                    .scatter_ray(&ray, intersection)
-                {
+        match closest {
+            Some((ref intersection, object)) => {
+                match object.material.scatter_ray(&ray, intersection) {
                     Some((scattered_ray, reflection_color)) => {
                         reflection_color * &self.color_for_ray(scattered_ray, bounce_depth - 1)
                     }
-                    None => {
-                        // This line only gets hit there's a closest intersection but no closest object... feels like a HACK !
-                        Color::from_rgb_u8(0, 0, 0)
-                    }
+                    // The scattering algorithm decided to absorb the ray, so return black
+                    None => Color::from_rgb_u8(0, 0, 0),
                 }
             }
+            // No intersections, so query the sky for a color
             None => self.sky.sky_color_for_direction(ray.dir),
         }
     }
