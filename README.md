@@ -3,6 +3,11 @@ A raytracer built in rust.
 
 ## Todo List!   
 
+### Bugs/Issues
+- something wrong with fuzzy reflection when angle with normal is close to pi/2,
+  leads to darkening of visual boundary of those spheres. (try rendering with depth=1 to see black pixels --
+  when the angle is close to pi/2, the fuzz addition can make the dot product just a little bit negative)
+
 ### Refactors/Improvements
 - camera needs a wrapper type for serialization
 - scene (or something?) needs a 'render config' that stores output info, number of samples, etc

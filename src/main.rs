@@ -1,6 +1,6 @@
 use std::fs;
 
-use image::{ImageBuffer, Rgb};
+use pixels::{Error, Pixels, SurfaceTexture};
 use rand::{rngs::StdRng, Rng, SeedableRng};
 
 use rays::{
@@ -19,8 +19,14 @@ use rays::{
         Scene, SceneBuilder,
     },
 };
+use winit::{
+    dpi::{LogicalSize, PhysicalPosition},
+    event::{Event, VirtualKeyCode, WindowEvent},
+    event_loop::{ControlFlow, EventLoop},
+    window::WindowBuilder,
+};
 
-fn main() {
+fn main() -> Result<(), Error> {
     // scene setup
     let scene = make_initial_test_scene().build().unwrap();
 
@@ -29,7 +35,7 @@ fn main() {
     // render
     let output_width = 800;
     let output_height = 500;
-    let samples_per_pixel = 15;
+    let samples_per_pixel = 1;
     let bounce_depth = 10;
 
     let color_matrix = render(
@@ -41,8 +47,69 @@ fn main() {
     );
 
     // write to output
-    let img_buffer: ImageBuffer<Rgb<u8>, Vec<u8>> = color_matrix.into();
-    img_buffer.save("target/debug/img_out/render.png").unwrap();
+    // let img_buffer: ImageBuffer<Rgb<u8>, Vec<u8>> = color_matrix.into();
+    // img_buffer.save("target/debug/img_out/render.png").unwrap();
+
+    // winit stuff
+    // vvvvvvvvvvv
+    env_logger::init();
+
+    let event_loop = EventLoop::new();
+
+    let window = {
+        let size = LogicalSize::new(output_width as f64, output_height as f64);
+        WindowBuilder::new()
+            .with_title("rays")
+            .with_min_inner_size(size)
+            // puts the window on my second monitor, definitely a HACK
+            .with_position(PhysicalPosition { x: 2200, y: 200 })
+            .build(&event_loop)
+            .unwrap()
+    };
+
+    let mut pixels = {
+        let window_size = window.inner_size();
+        let surface_texture = SurfaceTexture::new(window_size.width, window_size.height, &window);
+        Pixels::new(output_width, output_height, surface_texture)?
+    };
+
+    event_loop.run(move |event, _, control_flow| {
+        match event {
+            Event::WindowEvent {
+                window_id,
+                event: window_event,
+            } if window_id == window.id() => match window_event {
+                WindowEvent::KeyboardInput { input, .. } => {
+                    if input.virtual_keycode == Some(VirtualKeyCode::Escape) {
+                        *control_flow = ControlFlow::Exit
+                    }
+                }
+                WindowEvent::CloseRequested => *control_flow = ControlFlow::Exit,
+                _ => {}
+            },
+            Event::RedrawRequested(_) => {
+                // draw stuff
+                let pixel_buffer = pixels.frame_mut();
+                for (pix_index, pixel) in pixel_buffer.chunks_exact_mut(4).enumerate() {
+                    let row = pix_index / output_width as usize;
+                    let col = pix_index % output_width as usize;
+
+                    let color_from_mat = color_matrix.at(row, col);
+
+                    let color = [
+                        (255.0 * color_from_mat.r()) as u8,
+                        (255.0 * color_from_mat.g()) as u8,
+                        (255.0 * color_from_mat.b()) as u8,
+                        0xff,
+                    ];
+                    pixel.copy_from_slice(&color);
+                }
+
+                pixels.render().unwrap();
+            }
+            _ => {}
+        };
+    });
 }
 
 const _SCENE_PATH: &str = "./data";
