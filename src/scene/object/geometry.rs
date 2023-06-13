@@ -23,6 +23,7 @@ pub struct Intersection {
     //
     // TODO: add `object` -- as a reference?
     //   then spend 3 hours figuring out how lifetimes work, probably
+    //   ... or should it be `geometry`?
 }
 
 #[typetag::serde]

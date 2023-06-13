@@ -13,7 +13,7 @@ impl Sky {
         Sky { nadir, zenith }
     }
 
-    pub fn sky_color_for_direction(&self, dir: Vec3) -> Color {
+    pub fn sky_color_for_direction(&self, dir: &Vec3) -> Color {
         let t = 0.5 * (dir.y + 1.0);
         lerp(t, &self.nadir, &self.zenith)
     }
